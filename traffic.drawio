@@ -1,0 +1,172 @@
+<mxfile host="app.diagrams.net" modified="2024-05-20T18:22:20.761Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="hRWq5Lcemb2WHfN1lTD5" version="24.4.4" type="github">
+  <diagram name="Page-1" id="c4acf3e9-155e-7222-9cf6-157b1a14988f">
+    <mxGraphModel dx="1313" dy="1753" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#FFF3F2" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-54" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="180" y="440" width="1315" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-27" value="AMBULANS VAR MI" style="rhombus;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="135" y="10" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-29" value="max_şerit = Ambulans_şerit" style="rounded=0;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry y="135" width="155" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-27" target="y7w65uzr-BQP8JjFJ-ky-29" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-30" value="&lt;b&gt;&lt;font color=&quot;#d90606&quot;&gt;FALSE&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="305" y="20" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-31" value="&lt;b&gt;&lt;font color=&quot;#13b007&quot;&gt;TRUE&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="80" y="20" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-36" value="" style="group" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1" connectable="0">
+          <mxGeometry x="450" y="220" width="865" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-7" value="&lt;br&gt;EĞER max_araç sayısı - max_araç_hata_payı &amp;lt;= max2_araç_sayısı" style="rhombus;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-36" vertex="1">
+          <mxGeometry width="340" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-12" value="&lt;b&gt;&lt;font color=&quot;#13b007&quot;&gt;TRUE&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-36" vertex="1">
+          <mxGeometry x="320" y="20" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-15" value="ORTALAMA(max_şerit) &amp;gt;= ORTALAMA(max2_şerit)" style="rhombus;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-36" vertex="1">
+          <mxGeometry x="250" y="70" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-36" source="y7w65uzr-BQP8JjFJ-ky-7" target="y7w65uzr-BQP8JjFJ-ky-15" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-18" value="ORTALAMA(yol_bilgisi) = BÖLME( &lt;font color=&quot;#96803c&quot;&gt;TOPLAM(Araç Bekleme Süreleri, ÇARPMA(şerit_sayısı x Araç_kalkış_süresi) )&lt;/font&gt; / Araç Sayısı )" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-36" vertex="1">
+          <mxGeometry x="545" y="85" width="320" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-19" value="YEŞİL(max_şerit)" style="rounded=0;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-36" vertex="1">
+          <mxGeometry x="455" y="150" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-36" source="y7w65uzr-BQP8JjFJ-ky-7" target="y7w65uzr-BQP8JjFJ-ky-19" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-36" source="y7w65uzr-BQP8JjFJ-ky-15" target="y7w65uzr-BQP8JjFJ-ky-19" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-21" value="&lt;b&gt;&lt;font color=&quot;#13b007&quot;&gt;TRUE&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-36" vertex="1">
+          <mxGeometry x="465" y="80" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-22" value="YEŞİL(max2_şerit)" style="rounded=0;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-36" vertex="1">
+          <mxGeometry x="175" y="150" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-36" source="y7w65uzr-BQP8JjFJ-ky-15" target="y7w65uzr-BQP8JjFJ-ky-22" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-25" value="&lt;b&gt;&lt;font color=&quot;#d90606&quot;&gt;FALSE&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-36" vertex="1">
+          <mxGeometry x="210" y="85" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-29" target="y7w65uzr-BQP8JjFJ-ky-19" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-37" target="y7w65uzr-BQP8JjFJ-ky-7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-37" value="EĞER (AZ ARAÇ MI MANTIKLI ÇOK ARAÇ MI) = &quot;Az Araç&quot;" style="rhombus;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="250" y="70" width="380" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-27" target="y7w65uzr-BQP8JjFJ-ky-37" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-38" value="YAPAY ZEKA KARAR VERME MEKANİZMASI" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="812.5" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-39" value="4lü kavşakta trafik ışıklarında bir yolda 30 araç bekliyor ve bu araçlar ortalama 10sn dir bekliyor, başka bir yolda da 2 araç ortalama 10 sn&#39;dir bekliyor, diğer yolda 3 araba ortalama 12sn&#39;dir, diğer yolda 15 araç ortalama 15sn&#39;dir bekliyor. Problem şu, hangi yolun ışığını yeşil yakmak mantıklı? 2 araç 30 aracı mı beklemeli yoksa 30 araç 2 aracı mı beklemeli, veya araçların geçiş sırası mantıklı olarak hangi sıra ile olmalı" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="740" y="80" width="365" height="127.5" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-38" target="y7w65uzr-BQP8JjFJ-ky-39" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-44" value="&lt;b&gt;&lt;font color=&quot;#d90606&quot;&gt;FALSE&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="610" y="90" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-46" target="y7w65uzr-BQP8JjFJ-ky-19" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-46" value="max_şerit = min_şerit" style="rounded=0;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="140" y="230" width="155" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-37" target="y7w65uzr-BQP8JjFJ-ky-46" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-48" value="&lt;b&gt;&lt;font color=&quot;#13b007&quot;&gt;TRUE&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="215" y="90" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-50" value="YELLOW(şerit)" style="rounded=0;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-54" vertex="1">
+          <mxGeometry x="770" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-22" target="y7w65uzr-BQP8JjFJ-ky-50" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-54" source="y7w65uzr-BQP8JjFJ-ky-19" target="y7w65uzr-BQP8JjFJ-ky-50" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="oIGfVPpO3NDlGPlNqkw2-1" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;dashPattern=12 12;" edge="1" parent="y7w65uzr-BQP8JjFJ-ky-54">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="530" y="80" as="sourcePoint" />
+            <mxPoint x="570" y="20" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="y7w65uzr-BQP8JjFJ-ky-55" target="y7w65uzr-BQP8JjFJ-ky-27" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-58" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="190" y="-90" width="497.5" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-1" value="START" style="ellipse;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-58" vertex="1">
+          <mxGeometry x="290" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-2" value="Yol Bilgisi,&lt;br&gt;Yol Bilgisindeki Araçların Bekleme Süresi = [ ... ],&lt;br&gt;Araç Sayıları = [ ... ] ,&lt;br&gt;max_araç_hata_payı = 2 araç" style="rounded=0;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-58" vertex="1">
+          <mxGeometry x="202.5" y="120" width="295" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-58" source="y7w65uzr-BQP8JjFJ-ky-1" target="y7w65uzr-BQP8JjFJ-ky-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-3" value="Araç sayısılarını kameradan belirle ve bekleme sürelerini almaya başla" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="y7w65uzr-BQP8JjFJ-ky-58" vertex="1">
+          <mxGeometry y="122.5" width="180" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-6" value="max_şerit = Araç sayılarından max belirle&lt;br&gt;max_araç_sayısı = araç_sayısı(max_şerit)&lt;br&gt;max2_araç_sayısı = araç_sayısı(max2_şerit)" style="rounded=0;whiteSpace=wrap;html=1;" parent="y7w65uzr-BQP8JjFJ-ky-58" vertex="1">
+          <mxGeometry x="210" y="210" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-58" source="y7w65uzr-BQP8JjFJ-ky-2" target="y7w65uzr-BQP8JjFJ-ky-6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-55" value="TRAFİK SENARYOSU" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;size=20;" parent="y7w65uzr-BQP8JjFJ-ky-58" vertex="1">
+          <mxGeometry x="220" y="310" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="y7w65uzr-BQP8JjFJ-ky-58" source="y7w65uzr-BQP8JjFJ-ky-6" target="y7w65uzr-BQP8JjFJ-ky-55" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="y7w65uzr-BQP8JjFJ-ky-50" target="y7w65uzr-BQP8JjFJ-ky-55" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1010" y="980" />
+              <mxPoint x="1550" y="980" />
+              <mxPoint x="1550" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-61" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="40" y="1040" as="sourcePoint" />
+            <mxPoint x="40" y="-170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="y7w65uzr-BQP8JjFJ-ky-62" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1640" y="1050" as="sourcePoint" />
+            <mxPoint x="1640" y="-160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oIGfVPpO3NDlGPlNqkw2-3" value="Bir yolda Max araba sayısından fazla araba varsa min araba sayısı (2-3-5 gibi araba sayısı) altındaki araçlara öncelik verilecek" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="710" y="380" width="230" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
