@@ -1,6 +1,4 @@
 
-
-
 class DecisionCenter:
     def __init__(self):
         self.road = {
