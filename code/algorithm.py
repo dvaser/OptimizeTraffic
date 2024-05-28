@@ -1,7 +1,7 @@
 
 class DecisionCenter:
     def __init__(self):
-        self.road = {
+        self.kavşak = {
             "road1":{
                 "vehicle1":42,
                 "vehicle2":35,
@@ -14,4 +14,6 @@ class DecisionCenter:
         }
         self.max_road_id = None
         self.vehicle_margin_err = 0 # Vehicle Count amount of deviation
+        self.max_vehicle_count = 0 
+        self.max2_vehicle_count = 0
 

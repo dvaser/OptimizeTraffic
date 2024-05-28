@@ -4,8 +4,14 @@ import time
 
 class CAM:
     def __init__(self, cam_num, source):
-        self.model = YOLO('model/carModel.pt')
-        self.classes = [0] # car
+        self.model = YOLO('model/yolov8s.pt')
+        self.classes = [2, # car
+                        5, # bus
+                        7, # truck
+                        9, # traffic light
+        ]
+        # self.model = YOLO('model/carModel.pt')
+        # self.classes = [0] # car
         self.cam_num = cam_num
         self.source = source
         self.cam = self.createCAM()
