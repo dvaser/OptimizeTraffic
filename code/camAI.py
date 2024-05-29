@@ -8,8 +8,7 @@ class CAM:
         self.classes = [2, # car
                         5, # bus
                         7, # truck
-                        9, # traffic light
-        ]
+                        ]
         # self.model = YOLO('model/carModel.pt')
         # self.classes = [0] # car
         self.cam_num = cam_num
@@ -18,9 +17,9 @@ class CAM:
     
     def createCAM(self):
         return {
-            "port" : f"{self.cam_num}_port_source_code",
+            "port" : f"{self.cam_num}",
             "model" : self.model.predict(
-                source=f"{self.source}", 
+                source=f"--camera {self.source}", 
                 conf=0.85, 
                 classes=self.classes, 
                 show=True, 
@@ -28,7 +27,7 @@ class CAM:
                 save=False
             ),
             "runtime" : time.time(),
-            "tls_port": f"{self.cam_num}_port_traffic_lamb",
+            "tls_port": f"--tls {self.cam_num}",
             "vehicle_count" : 0,
             "all_count" : [],   # All vehicle count at runtime
         }
