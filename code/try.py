@@ -1,12 +1,11 @@
 """
-# from ultralytics import YOLO
+from ultralytics import YOLO
 
 
-# model = YOLO('models/yolov8s.pt')
+model = YOLO('models/yolov8s.pt')
 
-# cam = model.predict(source="/dev/video0",conf=0.85)
+cam = model.predict(source="/dev/video0",conf=0.85)
 """
-
 
 
 
@@ -40,17 +39,17 @@ cap.release()
 cv2.destroyAllWindows()
 """
 
+
+"""
 import time
 import picamera2 as picamera
 
 # Kamera nesnesini oluştur
-camera = picamera.PiCamera()
+camera = picamera.Picamera2()
 
 try:
-    camera.resolution = (1024,768)
     # Kamera önizlemesini başlat
     camera.start_preview()
-    camera.capture("Test")
     
     # 5 saniye beklet
     time.sleep(5)
@@ -60,3 +59,4 @@ try:
 finally:
     # Kamera kaynağını serbest bırak
     camera.close()
+"""
