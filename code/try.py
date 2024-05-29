@@ -1,15 +1,13 @@
-roads = {
-            "road1":{
-                "vehicle1":42,
-                "vehicle2":35,
-                "vehicle5":22
-            },
-            "road2":{
-                "vehicle3":62,
-                "vehicle4":55
-            }
-        }
+from ultralytics import YOLO
 
-for road in roads:
-    for v in roads[road]:
-        print(roads[road][v])
+
+model = YOLO('models/yolov8s.pt')
+
+cam = model.predict(
+                source="libcamera-hello -t 0 --camera 0", 
+                conf=0.85, 
+                classes=[2,5,7], 
+                show=True, 
+                stream=False, 
+                save=False
+            ),
