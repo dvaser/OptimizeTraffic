@@ -1,62 +1,34 @@
-"""
+import cv2
+from picamera2 import Picamera2
 from ultralytics import YOLO
 
+# Initialize the Picamera2
+picam2 = Picamera2()
+# picam2.preview_configuration.main.size = (1280, 720)
+picam2.preview_configuration.main.format = "RGB888"
+picam2.preview_configuration.align()
+picam2.configure("preview")
+picam2.start()
 
-model = YOLO('models/yolov8s.pt')
+# Load the YOLOv8 model
+model = YOLO("models/yolov8n.pt")
 
-cam = model.predict(source="/dev/video0",conf=0.85)
-"""
-
-
-
-"""
-import cv2
-# print(cv2.VideoCapture(1).isOpened())
-
-# Kamera cihazını tanımla
-cap = cv2.VideoCapture(0)
-
-# Kamera cihazı başarıyla açıldı mı diye kontrol et
-if not cap.isOpened():
-    print("Kamera cihazı açılamadı.")
-    exit()
-
-# Kamera görüntüsünü oku ve göster
 while True:
-    ret, frame = cap.read()  # Görüntüyü oku
-    if not ret:
-        print("Görüntü alınamadı.")
-        break
-    
-    cv2.imshow('Kamera Görüntüsü', frame)  # Görüntüyü göster
-    
-    # 'q' tuşuna basıldığında döngüyü sonlandır
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    # Capture frame-by-frame
+    frame = picam2.capture_array()
+
+    # Run YOLOv8 inference on the frame
+    results = model(frame)
+
+    # Visualize the results on the frame
+    annotated_frame = results[0].plot()
+
+    # Display the resulting frame
+    cv2.imshow("Camera", annotated_frame)
+
+    # Break the loop if 'q' is pressed
+    if cv2.waitKey(1) == ord("q"):
         break
 
-# Kaynakları serbest bırak
-cap.release()
+# Release resources and close windows
 cv2.destroyAllWindows()
-"""
-
-
-"""
-import time
-import picamera2 as picamera
-
-# Kamera nesnesini oluştur
-camera = picamera.Picamera2()
-
-try:
-    # Kamera önizlemesini başlat
-    camera.start_preview()
-    
-    # 5 saniye beklet
-    time.sleep(5)
-    
-    # Kamera önizlemesini durdur
-    camera.stop_preview()
-finally:
-    # Kamera kaynağını serbest bırak
-    camera.close()
-"""
