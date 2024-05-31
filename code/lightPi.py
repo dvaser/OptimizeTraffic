@@ -48,6 +48,3 @@ class TrafficLamp:
 
 t = TrafficLamp(14,15,17,18,27,22,23,24,25)
 
-class Camera:
-    def __init__(self):
-        pass
