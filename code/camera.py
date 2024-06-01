@@ -6,7 +6,7 @@ import cv2
 class Camera:
     def __init__(self, source):
         self.source = source
-        self.cam = Picamera2()
+        self.cam = Picamera2(camera_num=source)
         self.cam.configure(self.cam.create_still_configuration())
         self.cam.start()
         self.vehicles = {}
@@ -44,3 +44,7 @@ class Camera:
         while True:
             self.process_frame()
             time.sleep(0.1)  # 100 ms'de bir frame işle
+
+
+cam = Camera(0)
+cam.run()
