@@ -48,7 +48,7 @@ def create_cameras(num_cameras=1):
 
 """"""
 if __name__ == "__main__":
-    cameras = create_cameras(num_cameras=1)
+    cameras = create_cameras(num_cameras=4)
     threads = []
 
     for cam in cameras:
