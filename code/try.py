@@ -135,7 +135,7 @@ cam = CAM(cam_nums=4)
 cam.run()
 """
 
-
+'''
 from picamera2 import Picamera2
 import time
 
@@ -149,19 +149,77 @@ picam2d.start()
 picam2d.capture_file("images/cam0.jpg")
 picam2d.stop()
 
-# picam2c = Picamera2(1)
-# picam2c.start()
-# picam2c.capture_file("images/cam1.jpg")
-# picam2c.stop()
+picam2c = Picamera2(1)
+picam2c.start()
+picam2c.capture_file("images/cam1.jpg")
+picam2c.stop()
 
 
-# picam2b = Picamera2(2)
-# picam2b.start()
-# picam2b.capture_file("images/cam2.jpg")
-# picam2b.stop()
+picam2b = Picamera2(2)
+picam2b.start()
+picam2b.capture_file("images/cam2.jpg")
+picam2b.stop()
 
 
-# picam2a = Picamera2(3)
-# picam2a.start()
-# picam2a.capture_file("images/cam3.jpg")
-# picam2a.stop()
+picam2a = Picamera2(3)
+picam2a.start()
+picam2a.capture_file("images/cam3.jpg")
+picam2a.stop()'''
+
+
+'''import time
+from picamera2 import Picamera2
+
+def capture_image(camera_num, output_file):
+    try:
+        picam = Picamera2()
+        camera_config = picam.create_still_configuration(main={"size": (640, 480)})
+        picam.configure(camera_config)
+        picam.start()
+        time.sleep(2)  # Give some time for the camera to start
+        picam.capture_file(output_file)
+        picam.stop()
+        picam.close()
+        print(f"Captured image from camera {camera_num} and saved to {output_file}")
+    except Exception as e:
+        print(f"Error capturing image from camera {camera_num}: {e}")
+
+if __name__ == "__main__":
+    camera_ids = [
+        "/base/axi/pcie@120000/rp1/i2c@80000/pca@70/i2c@0/imx219@10",
+        "/base/axi/pcie@120000/rp1/i2c@80000/pca@70/i2c@1/imx219@10",
+        "/base/axi/pcie@120000/rp1/i2c@80000/pca@70/i2c@2/imx219@10",
+        "/base/axi/pcie@120000/rp1/i2c@80000/pca@70/i2c@3/imx219@10"
+    ]
+
+    for i, cam_id in enumerate(camera_ids):
+        print(f"Accessing camera {i} with ID {cam_id}")
+        capture_image(i, f"images/cam{i}.jpg")
+        time.sleep(5)  # Add delay to avoid conflicts
+'''
+
+import time
+from picamera2 import Picamera2
+
+def capture_image(video_device, output_file):
+    try:
+        picam = Picamera2(camera_num=video_device)
+        camera_config = picam.create_still_configuration(main={"size": (640, 480)})
+        picam.configure(camera_config)
+        picam.start()
+        time.sleep(2)  # Give some time for the camera to start
+        picam.capture_file(output_file)
+        picam.stop()
+        picam.close()
+        print(f"Captured image from video device /dev/video{video_device} and saved to {output_file}")
+    except Exception as e:
+        print(f"Error capturing image from video device /dev/video{video_device}: {e}")
+
+if __name__ == "__main__":
+    # Assuming the video device nodes for the cameras are /dev/video0, /dev/video1, /dev/video2, /dev/video3
+    video_devices = [0, 1, 2, 3]
+
+    for i, video_device in enumerate(video_devices):
+        print(f"Accessing video device /dev/video{video_device}")
+        capture_image(video_device, f"images/cam{i}.jpg")
+        time.sleep(5)  # Add delay to avoid conflicts
