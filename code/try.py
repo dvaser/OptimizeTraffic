@@ -137,6 +137,7 @@ cam.run()
 
 
 from picamera2 import Picamera2
+import time
 
 result = Picamera2.global_camera_info()
 
@@ -144,21 +145,23 @@ for r in result:
     print(r)
 
 picam2d = Picamera2(0)
-picam2c = Picamera2(1)
-picam2b = Picamera2(2)
-picam2a = Picamera2(3)
-
-picam2a.start()
-picam2b.start()
-picam2c.start()
 picam2d.start()
-
 picam2d.capture_file("images/cam0.jpg")
-picam2c.capture_file("images/cam1.jpg")
-picam2b.capture_file("images/cam2.jpg")
-picam2a.capture_file("images/cam3.jpg")
-
-picam2a.stop()
-picam2b.stop()
-picam2c.stop()
 picam2d.stop()
+
+# picam2c = Picamera2(1)
+# picam2c.start()
+# picam2c.capture_file("images/cam1.jpg")
+# picam2c.stop()
+
+
+# picam2b = Picamera2(2)
+# picam2b.start()
+# picam2b.capture_file("images/cam2.jpg")
+# picam2b.stop()
+
+
+# picam2a = Picamera2(3)
+# picam2a.start()
+# picam2a.capture_file("images/cam3.jpg")
+# picam2a.stop()
