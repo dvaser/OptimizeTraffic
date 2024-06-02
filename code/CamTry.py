@@ -13,6 +13,7 @@ class CAM:
         self.yolo_config()
         self.model = YOLO("models/yolov8n.pt")
         self.duration = duration
+        self.yolo_classes_counts = []
 
     def yolo_config(self, yolo_conf=0.80, yolo_classes=[2,5,7]):
         self.yolo_conf = yolo_conf
@@ -58,7 +59,7 @@ class CAM:
 
                 print("Results")
                 for r in results:
-                    print("Boxes: ", r.boxes.cls)
+                    self.yolo_classes_counts.append(r.boxes.cls)
 
                 if not self.display_frame(results):
                     break
@@ -67,9 +68,19 @@ class CAM:
         finally:
             self.stop()
 
+            return self.calculate_yolo_classes()
+
+    def calculate_yolo_classes(self):
+        ambulance_count = sum(1 for sublist in self.yolo_classes_counts if 5 or 7 in sublist)
+        ambulance_count = int((ambulance_count / len(self.yolo_classes_counts)) + .5)
+        car_count = sum(sublist.count(2) for sublist in self.yolo_classes_counts)
+        car_count =int((car_count / len(self.yolo_classes_counts)) + .5)
+        return ambulance_count, car_count
 
 cameras = 4
 for cam in range(cameras):
     camera = CAM(source=cam, output_file=f"videos/cam{cam}.h264", duration=10)
     camera.yolo_config(yolo_conf=0.25)
-    camera.run()
+    a_c, c_c = camera.run()
+
+print(a_c, c_c)
