@@ -57,7 +57,6 @@ class CAM:
                 frame = self.capture_frame()
                 results = self.run_yolo_inference(frame)
 
-                print("Results")
                 for r in results:
                     self.yolo_classes_counts.append(r.boxes.cls.numpy().tolist())
 
@@ -77,10 +76,9 @@ class CAM:
         car_count =int((car_count / len(self.yolo_classes_counts)) + .5)
         return ambulance_count, car_count
 
-cameras = 4
+cameras = 1
 for cam in range(cameras):
     camera = CAM(source=cam, output_file=f"videos/cam{cam}.h264", duration=10)
     camera.yolo_config(yolo_conf=0.25)
     a_c, c_c = camera.run()
-
-print(a_c, c_c)
+    print(a_c, c_c)
