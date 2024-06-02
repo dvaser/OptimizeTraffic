@@ -65,5 +65,6 @@ class CAM:
 
 cameras = 4
 for cam in range(cameras):
-    camera = CAM(source=cam, output_file=f"videos/cam{cam}.h264", duration=5)
+    camera = CAM(source=cam, output_file=f"videos/cam{cam}.h264", duration=10)
+    camera.yolo_config(yolo_conf=0.25)
     camera.run()
