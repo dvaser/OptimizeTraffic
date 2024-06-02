@@ -13,7 +13,7 @@ class CAM:
         self.yolo_config()
         self.model = YOLO("models/yolov8n.pt")
         self.duration = duration
-        self.yolo_classes_counts = []
+        self.yolo_classes_counts = [[],]
 
     def yolo_config(self, yolo_conf=0.80, yolo_classes=[2,5,7]):
         self.yolo_conf = yolo_conf
@@ -59,7 +59,7 @@ class CAM:
 
                 print("Results")
                 for r in results:
-                    self.yolo_classes_counts.append(r.boxes.cls)
+                    self.yolo_classes_counts.append(r.boxes.cls.numpy().tolist())
 
                 if not self.display_frame(results):
                     break
