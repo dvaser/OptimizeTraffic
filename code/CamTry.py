@@ -55,6 +55,11 @@ class CAM:
             while count:
                 frame = self.capture_frame()
                 results = self.run_yolo_inference(frame)
+
+                print("Results")
+                for r in results:
+                    print("Boxes: ", r.boxes.cls)
+
                 if not self.display_frame(results):
                     break
                 time.sleep(1)
