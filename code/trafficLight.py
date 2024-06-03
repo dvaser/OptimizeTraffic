@@ -13,7 +13,7 @@ class TrafficLight:
         self.yellow.off()
         self.red.off()
         self.current_light = "green"
-    
+
     def set_yellow(self):
         self.green.off()
         self.yellow.on()
@@ -32,10 +32,13 @@ class TrafficLight:
                 self.set_yellow()
                 sleep(1)  # 1 saniye sarı ışık süresi
             self.set_green()
+            sleep(5)
         elif target_light == "red":
             if self.current_light == "green":
                 self.set_yellow()
                 sleep(1)
             self.set_red()
+            sleep(3)
         elif target_light == "yellow":
             self.set_yellow()
+

@@ -8,14 +8,19 @@ import threading
 class Camera:
     def __init__(self, source=0, output_file="videos/", duration=5):
         self.source = source
-        self.cam = Picamera2(camera_num=source)
         self.output_file = output_file
-        self.video_config()
-        self.yolo_config()
         self.duration = duration
         self.yolo_classes_counts = []
-        self.vehicles = {}
-        self.lock = threading.Lock()
+        # self.vehicles = {}
+        # self.lock = threading.Lock()
+    
+    def config_start(self, model="yolov8n", yolo_conf=0.80, yolo_classes=[2,5,7], size_x=640, size_y=480):
+        self.camera_config(source=self.source)
+        self.video_config(size_x=size_x, size_y=size_y)
+        self.yolo_config(model=model, yolo_conf=yolo_conf, yolo_classes=yolo_classes)
+
+    def camera_config(self, source):
+        self.cam = Picamera2(camera_num=source)
     
     def video_config(self, size_x=640, size_y=480):
         config = self.cam.create_video_configuration(main={"size": (size_x, size_y), "format": "RGB888"})
@@ -105,11 +110,3 @@ class Camera:
     def detect_ambulance(self, class_label):
         # YOLOv8 modelinden gelen class label'ı kontrol ederek ambulans olup olmadığını belirle
         return class_label == "truck"
-
-
-cameras = [2,3] 
-for cam in cameras:
-    camera = Camera(source=cam, output_file=f"videos/cam{cam}.h264", duration=10)
-    camera.yolo_config(yolo_conf=0.25)
-    a_c, c_c = camera.run()
-    print(a_c, c_c)

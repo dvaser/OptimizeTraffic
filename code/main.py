@@ -1,6 +1,9 @@
 from trafficLight import TrafficLight
 from camera import Camera
 from road import Road
+import time
+
+current_road_id = 0
 
 traffic_lights = [
     TrafficLight(green_pin=5, yellow_pin=21, red_pin=13),  
@@ -8,9 +11,9 @@ traffic_lights = [
     TrafficLight(green_pin=20, yellow_pin=26, red_pin=16),
     ]
 
-duration = 10
+duration = 5
 cameras = [
-    Camera(source=0, output_file=f"videos/cam{0}.h264", duration=duration), 
+    Camera(source=3, output_file=f"videos/cam{3}.h264", duration=duration), 
     Camera(source=1, output_file=f"videos/cam{1}.h264", duration=duration), 
     Camera(source=2, output_file=f"videos/cam{2}.h264", duration=duration), 
     # Camera(source=3, output_file=f"videos/cam{3}.h264", duration=duration)
@@ -27,20 +30,42 @@ def main():
     count_info = []
     for road in roads:
         count, class_info = road.camera_run()
+        road.camera.video_stop()
         info = [count, class_info, road.road_id]
         count_info.append(info)
 
-    # Ambulance s?n?f?na sahip yollar? filtreleme
     ambulance_roads = [info for info in count_info if info[1] == 'Ambulance']
 
     if ambulance_roads:
-        # E?er Ambulance yollar varsa, en y�ksek count'a sahip olan? bul
-        max_road = max(ambulance_roads, key=lambda info: info[0])
+        info = max(ambulance_roads, key=lambda info: info[0])
     else:
-        # E?er Ambulance yollar yoksa, di?er yollar aras?nda en y�ksek count'a sahip olan? bul
-        max_road = max(count_info, key=lambda info: info[0])
+        info = max(count_info, key=lambda info: info[0])
 
-    print(max_road)
+    target_road_id = info[2]
+    print("ROAD_ID: ", target_road_id)
+
+    road_red_light = [road.road_id for road in roads if road.road_id != target_road_id or road.road_id != current_road_id]
+
+    def traffic_system(target, current=0):
+        if not current:
+            roads[target].traffic_light.set_green()
+            for road_id in road_red_light:
+                roads[road_id].traffic_light.set_red()
+        else:
+            roads[current].traffic_light.set_yellow()
+            roads[target].traffic_light.set_yellow()
+            for road_id in road_red_light:
+                roads[road_id].traffic_light.set_red()
+            time.sleep(2)
+            for road_id in road_red_light:
+                roads[road_id].traffic_light.set_red()
+            roads[current].traffic_light.set_red()
+            roads[target].traffic_light.set_green()
+        
+        return target_road_id
+    
+    current_road_id = traffic_system(target=target_road_id, current=current_road_id)
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()

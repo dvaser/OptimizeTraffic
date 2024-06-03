@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 class TrafficIntersection:
     def __init__(self, roads, vehicle_counts, waiting_times):
         self.roads = roads
@@ -43,15 +51,15 @@ class TrafficIntersection:
 
         return max_road
 
-# Example usage:
-roads = ["Road 1", "Road 2", "Road 3", "Road 4"]
-vehicle_counts = [40, 20, 15, 10]
-waiting_times = [
-    [10, 10, 10],
-    [10, 10, 10],
-    [5, 5, 5],
-    [2, 2, 2]
-]
+# # Example usage:
+# roads = ["Road 1", "Road 2", "Road 3", "Road 4"]
+# vehicle_counts = [40, 20, 15, 10]
+# waiting_times = [
+#     [10, 10, 10],
+#     [10, 10, 10],
+#     [5, 5, 5],
+#     [2, 2, 2]
+# ]
 
-traffic = TrafficIntersection(roads, vehicle_counts, waiting_times)
-print("Green light for:", traffic.determine_traffic_light(ambulance_road=None))
+# traffic = TrafficIntersection(roads, vehicle_counts, waiting_times)
+# print("Green light for:", traffic.determine_traffic_light(ambulance_road=None))
