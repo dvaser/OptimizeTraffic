@@ -46,5 +46,9 @@ class TrafficLamp:
             for led in group:
                 self.set_led_state(led, False)
 
-t = TrafficLamp(14,15,17,18,27,22,23,24,25)
+t = TrafficLamp(
+    13, 21, 5,
+    6, 12, 19,
+    16, 26, 20
+    )
 
