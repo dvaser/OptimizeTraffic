@@ -88,6 +88,7 @@ class Camera:
             self.video_stop()
             return self.calculate_yolo_classes()
 
+"""
     def update_vehicle_info(self, vehicle_id, position):
         with self.lock:
             if vehicle_id not in self.vehicles:
@@ -108,5 +109,7 @@ class Camera:
         pass
 
     def detect_ambulance(self, class_label):
+    
         # YOLOv8 modelinden gelen class label'ı kontrol ederek ambulans olup olmadığını belirle
         return class_label == "truck"
+"""

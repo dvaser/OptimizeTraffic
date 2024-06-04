@@ -13,3 +13,6 @@ class Road:
             return ambulance_count, "Ambulance"
         else:
             return car_count, "Car"
+
+    def run(self):
+        pass

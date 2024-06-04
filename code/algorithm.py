@@ -1,9 +1,35 @@
+import time
+from trafficLight import TrafficLamp
 
+class Algorithm:  
+    def __init__(self, roads, traffic_lights):
+        self.TLS = TrafficLamp
+        self.roads = roads
+        self.traffic_lights = traffic_lights
 
+    def traffic_light_config(self, count, class_info, road_id):
+        info = [count, class_info, road_id]
+        self.vehicle_count_info.append(info)
 
+        ambulance_roads = [info for info in self.vehicle_count_info if info[1] == 'Ambulance']
 
+        if ambulance_roads:
+            info = max(ambulance_roads, key=lambda info: info[0])
+        else:
+            info = max(self.vehicle_count_info, key=lambda info: info[0])
+        
+        return info
 
+    def run(self):
+        self.vehicle_count_info = []
+        for road in self.roads:
+            count, class_info = road.camera_run()
+            # road.camera.video_stop()
+            info = self.traffic_light_config(count=count, class_info=class_info, road_id=road.road_id)
 
+        target_road_id = info[2]
+        current_road_id = self.TLS.traffic_light_system(self.traffic_lights, target_id=target_road_id, green_duration=5, current_id=current_road_id)
+        self.TLS.light_config(target_id=target_road_id, current_id=current_road_id)
 
 
 class TrafficIntersection:
