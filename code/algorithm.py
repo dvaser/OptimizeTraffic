@@ -27,8 +27,7 @@ class Algorithm:
     def calc_average_waiting_time(self, info):
         """ waiting time """
         return sum(self.roads[info[2]].get_waiting_times(), 
-                    (self.roads[info[2]].camera.get_lane_info(self.roads[info[2]].camera.vehicle_log) * self.vehicle_departure_time)
-                    ) / info[0]
+                    (self.roads[info[2]].camera.lane_info * self.vehicle_departure_time)) / info[0]
 
     """ Ambulance Road """
     def calc_ambulance_road(self):

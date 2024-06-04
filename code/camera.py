@@ -4,6 +4,7 @@ from picamera2 import Picamera2
 from ultralytics import YOLO
 import time
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Camera:
     def __init__(self, source=0, file_name="cam", duration=5):
@@ -14,17 +15,41 @@ class Camera:
         self.yolo_classes_counts = []
         self.vehicles = {}
         self.vehicle_loc = []
+        self.lane_info = 0
 
-    def data(self):
+    def data(self): 
         self.yolo_classes_counts = []
         self.vehicles = {}
         self.vehicle_loc = []
 
+    def graph_midpoints(*points):
+        # Noktaları çizme
+        x, y = zip(*points)
+        plt.scatter(x, y, color='blue')
+
+        # Her noktayı etiketleme
+        for i, (x_val, y_val) in enumerate(points):
+            plt.text(x_val, y_val, f'({x_val:.2f}, {y_val:.2f})', fontsize=9, ha='right')
+
+        # Grafik başlığı ve eksen etiketleri
+        plt.title('Points Plot')
+        plt.xlabel('X Coordinate')
+        plt.ylabel('Y Coordinate')
+
+        # Eksenleri göster
+        plt.grid(True)
+        plt.axhline(y=0, color='k')
+        plt.axvline(x=0, color='k')
+
+        # Görselleştirme
+        plt.show()
+
     def get_lane_info(self, vehicle_loc_list):
         self.midpoints_loc = []
         self.midpoints = []
+        self.same_y_midpoints = []
 
-        def calc_vehicle_location(vehicle_loc_list, point_tolerance=1.5, threshold=0.6):
+        def calc_vehicle_location(vehicle_loc_list=vehicle_loc_list, point_tolerance=1.5, threshold=0.6):
             all_positions = []
             position_indices = []
             
@@ -59,13 +84,41 @@ class Camera:
             
             return averaged_positions
         
-        def calc_vehicleBox_midpoint(x, y, w, h):
+        def calc_vehicle_midpoint(x, y, w, h):
             mid_x = x + (w / 2)
             mid_y = y + (h / 2)
             return mid_x, mid_y
 
+        def isThere_same_lane(midpoint_1, midpoint_2, tolerance=30):
+            return abs(midpoint_1[1] - midpoint_2[1]) <= tolerance
+
+        def calc_midpoints():
+            for loc in self.midpoints_loc:
+                x, y, w, h = loc
+                self.midpoints.append(calc_vehicle_midpoint(x,y,w,h))
+
+        def calc_same_y_midpoints():
+            added_points = set()
+            for ind, midpoint_1 in enumerate(self.midpoints):
+                if midpoint_1 in added_points:
+                    continue
+                group = []
+                for midpoint_2 in self.midpoints[ind+1:]:
+                    if isThere_same_lane(midpoint_1=midpoint_1, midpoint_2=midpoint_2, tolerance=30):
+                        group.append(midpoint_2)
+                        added_points.add(midpoint_2)
+                if group:
+                    group.append(midpoint_1)
+                    added_points.add(midpoint_1)
+                    self.same_y_midpoints.append(group)
+
         def calc():
-            self.midpoints_loc = calc_vehicle_location
+            self.midpoints_loc = calc_vehicle_location(vehicle_loc_list=vehicle_loc_list)
+            calc_midpoints()
+            calc_same_y_midpoints()
+
+        calc()
+        return len(self.same_y_midpoints)
 
     def config(self, size_x=640, size_y=480):
         self.camera_config(source=self.source)
@@ -123,7 +176,7 @@ class Camera:
         car_count =int((car_count / yolo_classes_count) + .5)
         return ambulance_count, car_count
 
-    def run(self):
+    def run(self, graph=False):
         try:
             self.data()
             print(f"Source {self.source}")
@@ -136,6 +189,11 @@ class Camera:
                     break
                 time.sleep(1)
                 count -= 1
+            
+            self.lane_info = self.get_lane_info()
+            
+            if graph:
+                self.graph_midpoints(self.midpoints)
 
         except Exception as ex:
             print("EXCEPTION: ", ex)
@@ -147,7 +205,7 @@ class Camera:
 
 cam = Camera(3,"cam",5)
 cam.yolo_config(yolo_conf=0.15)
-x = cam.run()
+x = cam.run(graph=True)
 print(x)
 
 
