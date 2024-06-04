@@ -5,14 +5,21 @@ class Road:
         self.camera = camera
         self.traffic_light = traffic_light
 
+    def get_waiting_times(self):
+        # lambda waiting time 
+        return sum(self.camera.vehicles)
+
     def camera_run(self):
-        self.camera.config_start(yolo_conf=0.25)
+        self.camera.yolo_config(yolo_conf=0.25)
         ambulance_count, car_count = self.camera.run()
 
         if ambulance_count:
             return ambulance_count, "Ambulance"
         else:
             return car_count, "Car"
+
+    def waiting_time(self):
+        pass
 
     def run(self):
         pass

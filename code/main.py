@@ -1,9 +1,6 @@
 from trafficLight import TrafficLight
 from camera import Camera
 from road import Road
-import time
-
-current_road_id = 0
 
 traffic_lights = [
         TrafficLight(id= 0, green_pin=5, yellow_pin=21, red_pin=13),  
@@ -11,12 +8,11 @@ traffic_lights = [
         TrafficLight(id= 2, green_pin=20, yellow_pin=26, red_pin=16),
     ]
 
-duration = 5
 cameras = [
-        Camera(source=0, output_file=f"videos/cam{0}.h264", duration=duration), 
-        Camera(source=1, output_file=f"videos/cam{1}.h264", duration=duration), 
-        Camera(source=2, output_file=f"videos/cam{2}.h264", duration=duration), 
-        Camera(source=3, output_file=f"videos/cam{3}.h264", duration=duration)
+        Camera(source=0, file_name=f"cam{0}", duration=5), 
+        Camera(source=1, file_name=f"cam{1}", duration=5), 
+        Camera(source=2, file_name=f"cam{2}", duration=5), 
+        Camera(source=3, file_name=f"cam{3}", duration=5)
     ]
 
 roads = [

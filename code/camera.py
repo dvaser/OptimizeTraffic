@@ -3,21 +3,73 @@ from picamera2.encoders import H264Encoder, Quality
 from picamera2 import Picamera2
 from ultralytics import YOLO
 import time
-import threading
+import numpy as np
 
 class Camera:
-    def __init__(self, source=0, output_file="videos/", duration=5):
+    def __init__(self, source=0, file_name="cam", duration=5):
         self.source = source
-        self.output_file = output_file
+        self.output_file = f"videos/{file_name}.h264"
         self.duration = duration
+        self.yolo_config()
         self.yolo_classes_counts = []
-        # self.vehicles = {}
-        # self.lock = threading.Lock()
-    
-    def config_start(self, model="yolov8n", yolo_conf=0.80, yolo_classes=[2,5,7], size_x=640, size_y=480):
+        self.vehicles = {}
+        self.vehicle_loc = []
+
+    def data(self):
+        self.yolo_classes_counts = []
+        self.vehicles = {}
+        self.vehicle_loc = []
+
+    def get_lane_info(self, vehicle_loc_list):
+        self.midpoints_loc = []
+        self.midpoints = []
+
+        def calc_vehicle_location(vehicle_loc_list, point_tolerance=1.5, threshold=0.6):
+            all_positions = []
+            position_indices = []
+            
+            for i, loc in enumerate(vehicle_loc_list):
+                for pos in loc:
+                    all_positions.append(pos)
+                    position_indices.append(i)
+            
+            clusters = []
+            cluster_indices = []
+            
+            for position, index in zip(all_positions, position_indices):
+                added_to_cluster = False
+                for cluster, indices in zip(clusters, cluster_indices):
+                    if all(np.linalg.norm(np.array(position[:2]) - np.array(p[:2])) <= point_tolerance for p in cluster):
+                        cluster.append(position)
+                        indices.append(index)
+                        added_to_cluster = True
+                        break
+                if not added_to_cluster:
+                    clusters.append([position])
+                    cluster_indices.append([index])
+            
+            averaged_positions = []
+            total_detections = len(vehicle_loc_list)
+            
+            for cluster, indices in zip(clusters, cluster_indices):
+                unique_indices = set(indices)
+                detection_ratio = len(unique_indices) / total_detections
+                if detection_ratio >= threshold:
+                    averaged_positions.append(np.mean(cluster, axis=0).tolist())
+            
+            return averaged_positions
+        
+        def calc_vehicleBox_midpoint(x, y, w, h):
+            mid_x = x + (w / 2)
+            mid_y = y + (h / 2)
+            return mid_x, mid_y
+
+        def calc():
+            self.midpoints_loc = calc_vehicle_location
+
+    def config(self, size_x=640, size_y=480):
         self.camera_config(source=self.source)
         self.video_config(size_x=size_x, size_y=size_y)
-        self.yolo_config(model=model, yolo_conf=yolo_conf, yolo_classes=yolo_classes)
 
     def camera_config(self, source):
         self.cam = Picamera2(camera_num=source)
@@ -45,7 +97,9 @@ class Camera:
     def yolo_process(self):
         frame = self.cam.capture_array()
         results = self.model.predict(frame, classes=self.yolo_classes, conf=self.yolo_conf)
+        
         self.yolo_classes_counts.append(results[0].boxes.cls.numpy().tolist())
+        self.vehicle_loc.append(results[0].boxes.xywh.numpy().tolist())
 
         def display_frame(results):
             annotated_frame = results[0].plot()
@@ -71,7 +125,9 @@ class Camera:
 
     def run(self):
         try:
+            self.data()
             print(f"Source {self.source}")
+            self.config()
             self.video_start()
             count = self.duration
 
@@ -88,28 +144,11 @@ class Camera:
             self.video_stop()
             return self.calculate_yolo_classes()
 
-"""
-    def update_vehicle_info(self, vehicle_id, position):
-        with self.lock:
-            if vehicle_id not in self.vehicles:
-                self.vehicles[vehicle_id] = {"position": position, "start_time": time.time()}
-            else:
-                self.vehicles[vehicle_id]["position"] = position
 
-    def get_waiting_times(self):
-        waiting_times = {}
-        with self.lock:
-            for vehicle_id, info in self.vehicles.items():
-                if self.is_vehicle_stopped(info["position"]):
-                    waiting_times[vehicle_id] = time.time() - info["start_time"]
-        return waiting_times
+cam = Camera(3,"cam",5)
+cam.yolo_config(yolo_conf=0.15)
+x = cam.run()
+print(x)
 
-    def is_vehicle_stopped(self, position):
-        # Araç pozisyonuna göre durup durmadığını belirleyecek olan kod
-        pass
 
-    def detect_ambulance(self, class_label):
-    
-        # YOLOv8 modelinden gelen class label'ı kontrol ederek ambulans olup olmadığını belirle
-        return class_label == "truck"
-"""
+

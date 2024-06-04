@@ -6,86 +6,87 @@ class Algorithm:
         self.TLS = TrafficLamp
         self.roads = roads
         self.traffic_lights = traffic_lights
-
-    def traffic_light_config(self, count, class_info, road_id):
-        info = [count, class_info, road_id]
-        self.vehicle_count_info.append(info)
-
-        ambulance_roads = [info for info in self.vehicle_count_info if info[1] == 'Ambulance']
-
-        if ambulance_roads:
-            info = max(ambulance_roads, key=lambda info: info[0])
-        else:
-            info = max(self.vehicle_count_info, key=lambda info: info[0])
-        
-        return info
-
-    def run(self):
         self.vehicle_count_info = []
+        self.config()
+        
+    def config(self, min_vehicle_threshold=2, margin_err=2, vehicle_departure_time=0.25):
+        self.min_vehicle_threshold = min_vehicle_threshold
+        self.margin_err = margin_err
+        # second
+        self.vehicle_departure_time = vehicle_departure_time 
+
+    """ Is there Ambulance """
+    def isThere_ambulance(self):
+        self.ambulance_info = [info for info in self.vehicle_count_info if info[1] == 'Ambulance']
+        if self.ambulance_info:
+            return True
+        else:
+            return False
+    
+    """ Calculate Average info """
+    def calc_average_waiting_time(self, info):
+        """ waiting time """
+        return sum(self.roads[info[2]].get_waiting_times(), 
+                    (self.roads[info[2]].camera.get_lane_info(self.roads[info[2]].camera.vehicle_log) * self.vehicle_departure_time)
+                    ) / info[0]
+
+    """ Ambulance Road """
+    def calc_ambulance_road(self):
+        return max(self.ambulance_info, key=lambda info: info[0])
+
+    """ Min Vehicle Road """
+    def calc_min_road(self):
+        return min(self.vehicle_count_info, key=lambda info: info[0])
+
+    """ Max Vehicle Road """
+    def calc_max_road(self, max_num=1):
+        if max_num==1:            
+            return max(self.vehicle_count_info, key=lambda info: info[0])
+        else:
+            return sorted(self.vehicle_count_info, key=lambda info: info[0], reverse=False)[-max_num]
+
+    """ Run Traffic Light Library """
+    def run_traffic_light(self, info="saving_mode"):
+        if info == "saving_mode":
+            self.TLS.traffic_light_system(traffic_lights=self.traffic_lights, info="saving_mode")
+        else:
+            target_road_id = info[2]
+            current_road_id = self.TLS.traffic_light_system(traffic_lights=self.traffic_lights, info="run", target_id=target_road_id, green_duration=5, current_id=current_road_id)
+            self.TLS.light_config(target_id=target_road_id, current_id=current_road_id)
+
+    """ Run Road & Camera Library """
+    def run_camera(self):
         for road in self.roads:
             count, class_info = road.camera_run()
             # road.camera.video_stop()
-            info = self.traffic_light_config(count=count, class_info=class_info, road_id=road.road_id)
+            info = [count, class_info, road.road_id]
+            self.vehicle_count_info.append(info)
 
-        target_road_id = info[2]
-        current_road_id = self.TLS.traffic_light_system(self.traffic_lights, target_id=target_road_id, green_duration=5, current_id=current_road_id)
-        self.TLS.light_config(target_id=target_road_id, current_id=current_road_id)
-
-
-class TrafficIntersection:
-    def __init__(self, roads, vehicle_counts, waiting_times):
-        self.roads = roads
-        self.vehicle_counts = vehicle_counts
-        self.waiting_times = waiting_times
-        self.max_vehicle_error_margin = 2
-
-    def get_max_vehicle_road(self):
-        max_vehicles = max(self.vehicle_counts)
-        max_vehicle_index = self.vehicle_counts.index(max_vehicles)
-        return self.roads[max_vehicle_index], max_vehicles
-
-    def get_second_max_vehicle_road(self):
-        sorted_counts = sorted(self.vehicle_counts, reverse=True)
-        second_max_vehicles = sorted_counts[1]
-        second_max_vehicle_index = self.vehicle_counts.index(second_max_vehicles)
-        return self.roads[second_max_vehicle_index], second_max_vehicles
-
-    def calculate_average(self, road_index):
-        total_waiting_time = sum(self.waiting_times[road_index])
-        vehicle_count = self.vehicle_counts[road_index]
-        return total_waiting_time / vehicle_count
-
-    def determine_traffic_light(self, ambulance_road=None):
-        # Check if there's an ambulance
-        if ambulance_road is not None:
-            max_road = ambulance_road
-        else:
-            max_road, max_vehicle_count = self.get_max_vehicle_road()
-            second_max_road, second_max_vehicle_count = self.get_second_max_vehicle_road()
-
-            # Remove low vehicle count roads
-            if max_vehicle_count < self.max_vehicle_error_margin:
-                max_road = min(self.vehicle_counts)
+    def run_algorithm(self):
+        try:
+            self.run_camera()
+            
+            if self.isThere_ambulance():
+                info = self.calc_ambulance_road()
+                self.run_traffic_light(info=info)
             else:
-                # Compare average waiting times
-                max_road_index = self.roads.index(max_road)
-                second_max_road_index = self.roads.index(second_max_road)
-                if self.calculate_average(max_road_index) >= self.calculate_average(second_max_road_index):
-                    max_road = max_road
+                info_min = self.calc_min_road()
+                info_max = self.calc_max_road(max_num=1)
+                info_max_2 = self.calc_max_road(max_num=2)
+                if info_max[0]:
+                    if info_min[0] <= self.min_vehicle_threshold:
+                        info = info_min
+                    else:
+                        if info_max[0] - self.margin_err <= info_max_2[0]:
+                            if self.calc_average_waiting_time(info_max) >= self.calc_average_waiting_time(info_max_2):
+                                info = info_max
+                            else:
+                                info = info_max_2
+
+                    self.run_traffic_light(info=info)
                 else:
-                    max_road = second_max_road
+                    self.run_traffic_light(info="saving_mode")
 
-        return max_road
+        except Exception as ex:
+            print("EXCEPTION: ", ex)
 
-# # Example usage:
-# roads = ["Road 1", "Road 2", "Road 3", "Road 4"]
-# vehicle_counts = [40, 20, 15, 10]
-# waiting_times = [
-#     [10, 10, 10],
-#     [10, 10, 10],
-#     [5, 5, 5],
-#     [2, 2, 2]
-# ]
-
-# traffic = TrafficIntersection(roads, vehicle_counts, waiting_times)
-# print("Green light for:", traffic.determine_traffic_light(ambulance_road=None))

@@ -27,11 +27,18 @@ class TrafficLight:
         self.red.on()
         self.current_light = "red"
 
+    def set_saving_mode(self):
+        self.green.off()
+        self.yellow.off()
+        self.red.off()
+        self.current_light = "saving mode"
+
 # Pin Test
 class TrafficLamp:
     def __init__(self):
         pass
 
+    """ Raspberry Pi Led pin test """
     def test_pin(self, *pins):
         led_groups = []
         
@@ -77,31 +84,37 @@ class TrafficLamp:
 
         run()
 
+    """ Save: Target & Current Light """
     def light_config(self, target_id, current_id):
         self.target_road_id = target_id
         self.current_road_id = current_id
 
-    def traffic_light_system(self, traffic_lights, target_id, green_duration=5, current_id=0):    
+    """ Run traffic light mechanism system  """
+    def traffic_light_system(self, traffic_lights, info="saving_mode", target_id=0, green_duration=5, current_id=0):    
         
         def get_yellow(target, current, yellow_duration=2):
             target.set_yellow()
             current.set_yellow()
             time.sleep(yellow_duration)
 
-        target_light = traffic_lights[target_id]
-        current_light = traffic_lights[current_id]
+        if info == "saving_mode":
+            for light in traffic_lights:
+                light.set_saving_mode()
+            return info
+        else:
+            target_light = traffic_lights[target_id]
+            current_light = traffic_lights[current_id]
 
-        get_yellow(target_light, current_light, 2)
+            get_yellow(target_light, current_light, 2)
 
-        for light in traffic_lights:
-            if light != target_light:
-                light.set_red()
-        target_light.set_green()
-        time.sleep(green_duration)
+            for light in traffic_lights:
+                if light != target_light:
+                    light.set_red()
+            target_light.set_green()
+            time.sleep(green_duration)
 
-        return target_light.id
+            return target_light.id
     
-
 
 """TEST"""
 
