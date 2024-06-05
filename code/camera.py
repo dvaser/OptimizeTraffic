@@ -202,17 +202,17 @@ class Camera:
             self.lane_info = self.get_lane_info(self.vehicle_loc)
             print(self.lane_info)
 
+            try:
+                if graph:
+                    self.graph_midpoints(points=self.midpoints, output_file=self.file_name)
+            except Exception as ex:
+                print("PLOT EXCEPTION: ", ex)
+
         except Exception as ex:
             print("EXCEPTION: ", ex)
 
         finally:
             self.video_stop()
-            try:
-                if graph:
-                    self.graph_midpoints(points=self.midpoints, output_file=self.file_name)
-            except Exception as ex:
-                print(ex)
-
             return self.calculate_yolo_classes()
 
 
