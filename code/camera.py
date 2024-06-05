@@ -22,7 +22,10 @@ class Camera:
         self.vehicles = {}
         self.vehicle_loc = []
 
-    def graph_midpoints(*points):
+    def graph_midpoints(self, *points):
+        if not points or not all(len(point) == 2 for point in points):
+            print("No valid points to plot.")
+            return
         # Noktaları çizme
         x, y = zip(*points)
         plt.scatter(x, y, color='blue')
@@ -49,7 +52,7 @@ class Camera:
         self.midpoints = []
         self.same_y_midpoints = []
 
-        def calc_vehicle_location(vehicle_loc_list=vehicle_loc_list, point_tolerance=1.5, threshold=0.6):
+        def calc_vehicle_location(vehicle_loc_list=vehicle_loc_list, point_tolerance=1.5, threshold=0.2):
             all_positions = []
             position_indices = []
             
@@ -79,6 +82,7 @@ class Camera:
             for cluster, indices in zip(clusters, cluster_indices):
                 unique_indices = set(indices)
                 detection_ratio = len(unique_indices) / total_detections
+                print(detection_ratio)
                 if detection_ratio >= threshold:
                     averaged_positions.append(np.mean(cluster, axis=0).tolist())
             
@@ -190,7 +194,8 @@ class Camera:
                 time.sleep(1)
                 count -= 1
             
-            self.lane_info = self.get_lane_info()
+            self.lane_info = self.get_lane_info(self.vehicle_loc)
+            print(self.lane_info)
             
             if graph:
                 self.graph_midpoints(self.midpoints)
