@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 class Camera:
     def __init__(self, source=0, file_name="cam", duration=5):
         self.source = source
+        self.file_name = file_name
         self.output_file = f"videos/{file_name}.h264"
         self.duration = duration
         self.yolo_config()
@@ -16,19 +17,21 @@ class Camera:
         self.vehicles = {}
         self.vehicle_loc = []
         self.lane_info = 0
+        self.midpoints = []
 
     def data(self): 
         self.yolo_classes_counts = []
         self.vehicles = {}
         self.vehicle_loc = []
+        self.midpoints = []
 
-    def graph_midpoints(self, *points):
-        if not points or not all(len(point) == 2 for point in points):
+    def graph_midpoints(self, points, output_file="cam"):
+        if not points:
             print("No valid points to plot.")
             return
         # Noktaları çizme
-        x, y = zip(*points)
-        plt.scatter(x, y, color='blue')
+        for point in points:
+            plt.scatter(point[0], point[1], color='blue')
 
         # Her noktayı etiketleme
         for i, (x_val, y_val) in enumerate(points):
@@ -44,15 +47,14 @@ class Camera:
         plt.axhline(y=0, color='k')
         plt.axvline(x=0, color='k')
 
-        # Görselleştirme
+        plt.savefig(f'review/{output_file}.png')
         plt.show()
 
     def get_lane_info(self, vehicle_loc_list):
         self.midpoints_loc = []
-        self.midpoints = []
         self.same_y_midpoints = []
 
-        def calc_vehicle_location(vehicle_loc_list=vehicle_loc_list, point_tolerance=1.5, threshold=0.2):
+        def calc_vehicle_location(vehicle_loc_list=vehicle_loc_list, point_tolerance=1.5, threshold=0.6):
             all_positions = []
             position_indices = []
             
@@ -80,12 +82,14 @@ class Camera:
             total_detections = len(vehicle_loc_list)
             
             for cluster, indices in zip(clusters, cluster_indices):
+                # print(cluster)
                 unique_indices = set(indices)
                 detection_ratio = len(unique_indices) / total_detections
-                print(detection_ratio)
+                # print(detection_ratio)
                 if detection_ratio >= threshold:
                     averaged_positions.append(np.mean(cluster, axis=0).tolist())
             
+            # print(averaged_positions)
             return averaged_positions
         
         def calc_vehicle_midpoint(x, y, w, h):
@@ -122,6 +126,7 @@ class Camera:
             calc_same_y_midpoints()
 
         calc()
+        # print(self.same_y_midpoints)
         return len(self.same_y_midpoints)
 
     def config(self, size_x=640, size_y=480):
@@ -196,19 +201,22 @@ class Camera:
             
             self.lane_info = self.get_lane_info(self.vehicle_loc)
             print(self.lane_info)
-            
-            if graph:
-                self.graph_midpoints(self.midpoints)
 
         except Exception as ex:
             print("EXCEPTION: ", ex)
 
         finally:
             self.video_stop()
+            try:
+                if graph:
+                    self.graph_midpoints(points=self.midpoints, output_file=self.file_name)
+            except Exception as ex:
+                print(ex)
+
             return self.calculate_yolo_classes()
 
 
-cam = Camera(3,"cam",5)
+cam = Camera(2,"cam",5)
 cam.yolo_config(yolo_conf=0.15)
 x = cam.run(graph=True)
 print(x)
