@@ -4,6 +4,8 @@ from picamera2 import Picamera2
 from ultralytics import YOLO
 import time
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 class Camera:
@@ -17,6 +19,8 @@ class Camera:
         self.vehicle_loc = []
         self.lane_info = 0
         self.midpoints_vehicle = []
+        """duzenle"""
+        self.camera_angel = 45 
 
     def data(self): 
         self.yolo_classes_counts = []
@@ -98,7 +102,13 @@ class Camera:
             return mid_x, mid_y
 
         def isThere_same_lane(midpoint_1, midpoint_2, tolerance=30):
-            return abs(midpoint_1[1] - midpoint_2[1]) <= tolerance
+            try:
+                if abs(midpoint_1[1] - midpoint_2[1]) <= tolerance: 
+                    return True
+                else: 
+                    return False
+            except Exception as ex:
+                print("ISTHERE SAME Y EXCEPTION: ",ex)
 
         def calc_midpoints():
             self.midpoints = []
@@ -122,11 +132,34 @@ class Camera:
                     added_points.add(midpoint_1)
                     self.same_y_midpoints.append(group)
 
+        def group_points_by_y(points, tolerance=30):
+            # print(points)
+            groups = []
+            for point in points:
+                added = False
+                try:
+                    for group in groups:
+                        try:
+                            if isThere_same_lane(midpoint_1=point, midpoint_2=group[0], tolerance=tolerance):
+                                group.append(point)
+                                added = True
+                                break
+                        except Exception as ex:
+                            print("ISTHERE SAME EXCEPTION:", ex)
+                except Exception as ex:
+                    print("EXCEPTION", ex)
+                if not added:
+                    groups.append([point])
+            return len(groups), groups
+
         self.midpoints_loc = calc_vehicle_location(vehicle_loc_list=vehicle_loc_list)
         calc_midpoints()
         self.midpoints_vehicle = self.midpoints
-        calc_same_y_midpoints()
-        return len(self.same_y_midpoints)
+        try:
+            self.lane_info, self.same_y_midpoints =  group_points_by_y(self.midpoints)
+        except Exception as ex:
+            print("SAME Y EXCEPTION: ", ex)
+        # print(self.same_y_midpoints)
 
     def config(self, size_x=640, size_y=480):
         self.camera_config(source=self.source)
@@ -198,16 +231,17 @@ class Camera:
                 time.sleep(1)
                 count -= 1
             
-            self.lane_info = self.get_lane_info(self.vehicle_loc)
+            self.get_lane_info(self.vehicle_loc)
             print(self.lane_info)
         except Exception as ex:
             print("EXCEPTION: ", ex)
 
         finally:
             self.video_stop()
+            time.sleep(0.01)
             try:
                 if graph:
-                    print(self.midpoints_vehicle)
+                    # print(self.midpoints_vehicle)
                     self.graph_midpoints(points=self.midpoints_vehicle, output_file=self.file_name)
             except Exception as ex:
                 print("PLOT EXCEPTION: ", ex)
