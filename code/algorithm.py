@@ -26,8 +26,8 @@ class Algorithm:
     """ Calculate Average info """
     def calc_average_waiting_time(self, info):
         """ waiting time """
-        return sum(self.roads[info[2]].get_waiting_times(), 
-                    (self.roads[info[2]].camera.lane_info * self.vehicle_departure_time)) / info[0]
+        waiting_time = sum(self.roads[info[2]].waiting_time, (self.roads[info[2]].camera.lane_info * self.vehicle_departure_time)) / info[0]
+        return waiting_time
 
     """ Ambulance Road """
     def calc_ambulance_road(self):
@@ -45,12 +45,12 @@ class Algorithm:
             return sorted(self.vehicle_count_info, key=lambda info: info[0], reverse=False)[-max_num]
 
     """ Run Traffic Light Library """
-    def run_traffic_light(self, info="saving_mode"):
+    def run_traffic_light(self, info="saving_mode", duration=5):
         if info == "saving_mode":
             self.TLS.traffic_light_system(traffic_lights=self.traffic_lights, info="saving_mode")
         else:
             target_road_id = info[2]
-            current_road_id = self.TLS.traffic_light_system(traffic_lights=self.traffic_lights, info="run", target_id=target_road_id, green_duration=5, current_id=current_road_id)
+            current_road_id = self.TLS.traffic_light_system(traffic_lights=self.traffic_lights, info="run", target_id=target_road_id, green_duration=duration, current_id=current_road_id)
             self.TLS.light_config(target_id=target_road_id, current_id=current_road_id)
 
     """ Run Road & Camera Library """
@@ -64,10 +64,10 @@ class Algorithm:
     def run_algorithm(self):
         try:
             self.run_camera()
-            
+            duration = self.calc_average_waiting_time()
             if self.isThere_ambulance():
                 info = self.calc_ambulance_road()
-                self.run_traffic_light(info=info)
+                self.run_traffic_light(info=info, duration=duration)
             else:
                 info_min = self.calc_min_road()
                 info_max = self.calc_max_road(max_num=1)
@@ -82,9 +82,15 @@ class Algorithm:
                             else:
                                 info = info_max_2
 
-                    self.run_traffic_light(info=info)
+                    self.run_traffic_light(info=info, duration=duration)
                 else:
-                    self.run_traffic_light(info="saving_mode")
+                    info = [0, "Car", -1]
+                    self.run_traffic_light(info="saving_mode", duration=0)
+            for road in self.roads:
+                if road.road_id != info[2]:
+                    road.set_waiting_times(duration=duration)
+                else:
+                    road.set_waiting_times(duration=0)
 
         except Exception as ex:
             print("EXCEPTION: ", ex)
