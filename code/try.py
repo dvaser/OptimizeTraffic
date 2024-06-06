@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 def cluster_and_average_positions(tensor_list, tolerance=1.5, threshold=0.6):
     all_positions = []
@@ -7,7 +7,7 @@ def cluster_and_average_positions(tensor_list, tolerance=1.5, threshold=0.6):
     
     for i, tensor in enumerate(tensor_list):
         for pos in tensor:
-            print(pos)
+            # print(pos)
             all_positions.append(pos)
             position_indices.append(i)
 
@@ -38,7 +38,7 @@ def cluster_and_average_positions(tensor_list, tolerance=1.5, threshold=0.6):
     for cluster, indices in zip(clusters, cluster_indices):
         unique_indices = set(indices)
         detection_ratio = len(unique_indices) / total_detections
-        # print(detection_ratio, len(unique_indices) , total_detections)
+        print(detection_ratio, len(unique_indices) , total_detections)
         if detection_ratio >= threshold:
             averaged_positions.append(np.mean(cluster, axis=0).tolist())
     
@@ -100,8 +100,8 @@ for konum in ortalama_konumlar:
     orta_x, orta_y = orta_nokta_hesapla(x, y, w, h)
     orta_noktalar.append((orta_x, orta_y))
 
-# for i in orta_noktalar:
-#     print(i)
+for i in orta_noktalar:
+    print(i)
 
 # Adım 5: Aynı hizada olan araçları bulma
 def ayni_hizadami(orta_nokta1, orta_nokta2, tolerans):
@@ -125,6 +125,27 @@ for i, nokta1 in enumerate(orta_noktalar):
         aynı_hizadaki_gruplar.append(grup)
 
 print(aynı_hizadaki_gruplar)
+
+# Noktaları çizme
+x, y = zip(*orta_noktalar)
+plt.scatter(x, y, color='blue')
+
+# Her noktayı etiketleme
+for i, (x_val, y_val) in enumerate(orta_noktalar):
+    plt.text(x_val, y_val, f'({x_val:.2f}, {y_val:.2f})', fontsize=9, ha='right')
+
+# Grafik başlığı ve eksen etiketleri
+plt.title('Points Plot')
+plt.xlabel('X Coordinate')
+plt.ylabel('Y Coordinate')
+
+# Eksenleri göster
+plt.grid(True)
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+
+# Görselleştirme
+plt.show()
 
 
 

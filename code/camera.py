@@ -14,24 +14,21 @@ class Camera:
         self.duration = duration
         self.yolo_config()
         self.yolo_classes_counts = []
-        self.vehicles = {}
         self.vehicle_loc = []
         self.lane_info = 0
-        self.midpoints = []
+        self.midpoints_vehicle = []
 
     def data(self): 
         self.yolo_classes_counts = []
-        self.vehicles = {}
         self.vehicle_loc = []
-        self.midpoints = []
 
     def graph_midpoints(self, points, output_file="cam"):
         if not points:
             print("No valid points to plot.")
             return
-        # Noktaları çizme
-        for point in points:
-            plt.scatter(point[0], point[1], color='blue')
+        
+        x, y = zip(*points)
+        plt.scatter(x, y, color='blue')
 
         # Her noktayı etiketleme
         for i, (x_val, y_val) in enumerate(points):
@@ -51,17 +48,18 @@ class Camera:
         plt.show()
 
     def get_lane_info(self, vehicle_loc_list):
-        self.midpoints_loc = []
-        self.same_y_midpoints = []
-
-        def calc_vehicle_location(vehicle_loc_list=vehicle_loc_list, point_tolerance=1.5, threshold=0.6):
+        def calc_vehicle_location(vehicle_loc_list, tolerance=10, threshold=0.6):
             all_positions = []
             position_indices = []
             
-            for i, loc in enumerate(vehicle_loc_list):
-                for pos in loc:
+            for i, tensor in enumerate(vehicle_loc_list):
+                for pos in tensor:
+                    # print(pos)
                     all_positions.append(pos)
                     position_indices.append(i)
+
+            # print(all_positions, end="\n\n")
+            # print(position_indices, end="\n\n")
             
             clusters = []
             cluster_indices = []
@@ -69,7 +67,7 @@ class Camera:
             for position, index in zip(all_positions, position_indices):
                 added_to_cluster = False
                 for cluster, indices in zip(clusters, cluster_indices):
-                    if all(np.linalg.norm(np.array(position[:2]) - np.array(p[:2])) <= point_tolerance for p in cluster):
+                    if all(np.linalg.norm(np.array(position[:2]) - np.array(p[:2])) <= tolerance for p in cluster):
                         cluster.append(position)
                         indices.append(index)
                         added_to_cluster = True
@@ -78,18 +76,20 @@ class Camera:
                     clusters.append([position])
                     cluster_indices.append([index])
             
+            # print(clusters, end="\n\n")
+            # print(cluster_indices, end="\n\n")
+
             averaged_positions = []
             total_detections = len(vehicle_loc_list)
             
             for cluster, indices in zip(clusters, cluster_indices):
-                # print(cluster)
                 unique_indices = set(indices)
                 detection_ratio = len(unique_indices) / total_detections
-                # print(detection_ratio)
+                # print(detection_ratio, len(unique_indices) , total_detections)
                 if detection_ratio >= threshold:
                     averaged_positions.append(np.mean(cluster, axis=0).tolist())
             
-            # print(averaged_positions)
+            # print(averaged_positions, end="\n\n")
             return averaged_positions
         
         def calc_vehicle_midpoint(x, y, w, h):
@@ -101,11 +101,13 @@ class Camera:
             return abs(midpoint_1[1] - midpoint_2[1]) <= tolerance
 
         def calc_midpoints():
+            self.midpoints = []
             for loc in self.midpoints_loc:
                 x, y, w, h = loc
                 self.midpoints.append(calc_vehicle_midpoint(x,y,w,h))
 
         def calc_same_y_midpoints():
+            self.same_y_midpoints = []
             added_points = set()
             for ind, midpoint_1 in enumerate(self.midpoints):
                 if midpoint_1 in added_points:
@@ -120,13 +122,10 @@ class Camera:
                     added_points.add(midpoint_1)
                     self.same_y_midpoints.append(group)
 
-        def calc():
-            self.midpoints_loc = calc_vehicle_location(vehicle_loc_list=vehicle_loc_list)
-            calc_midpoints()
-            calc_same_y_midpoints()
-
-        calc()
-        # print(self.same_y_midpoints)
+        self.midpoints_loc = calc_vehicle_location(vehicle_loc_list=vehicle_loc_list)
+        calc_midpoints()
+        self.midpoints_vehicle = self.midpoints
+        calc_same_y_midpoints()
         return len(self.same_y_midpoints)
 
     def config(self, size_x=640, size_y=480):
@@ -201,22 +200,21 @@ class Camera:
             
             self.lane_info = self.get_lane_info(self.vehicle_loc)
             print(self.lane_info)
-
-            try:
-                if graph:
-                    self.graph_midpoints(points=self.midpoints, output_file=self.file_name)
-            except Exception as ex:
-                print("PLOT EXCEPTION: ", ex)
-
         except Exception as ex:
             print("EXCEPTION: ", ex)
 
         finally:
             self.video_stop()
+            try:
+                if graph:
+                    print(self.midpoints_vehicle)
+                    self.graph_midpoints(points=self.midpoints_vehicle, output_file=self.file_name)
+            except Exception as ex:
+                print("PLOT EXCEPTION: ", ex)
             return self.calculate_yolo_classes()
 
 
-cam = Camera(2,"cam",5)
+cam = Camera(1,"cam",5)
 cam.yolo_config(yolo_conf=0.15)
 x = cam.run(graph=True)
 print(x)
