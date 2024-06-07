@@ -13,7 +13,7 @@ class Camera:
     def __init__(self, source=0, file_name="cam", duration=5):
         self.source = source
         self.file_name = file_name
-        self.output_file = f"videos/{file_name}.h264"
+        self.output_file = f"videos/{file_name}.avi"
         self.duration = duration
         self.yolo_config()
         self.yolo_classes_counts = []
@@ -186,12 +186,14 @@ class Camera:
 
     def video_start(self):
         self.cam.start()
-        self.cam.start_recording(output=self.output_file, encoder=self.encoder, quality=Quality.HIGH)
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        self.video_writer = cv2.VideoWriter(self.output_file, fourcc, 20.0, (640, 480))
     
     def video_stop(self):
-        self.cam.stop_recording()
         self.cam.stop()
         self.cam.close()
+        if self.video_writer is not None:
+            self.video_writer.release() 
         cv2.destroyAllWindows()
 
     def yolo_process(self):
@@ -202,21 +204,17 @@ class Camera:
         self.vehicle_loc.append(results[0].boxes.xywh.numpy().tolist())
         self.orig_shape = results[0].orig_shape
 
-        def display_frame(results):
-            annotated_frame = results[0].plot()
-            cv2.imshow(f"Camera {self.source}", annotated_frame)
+        annotated_frame = results[0].plot()
 
-            if self.video_writer is not None:  
-                self.video_writer.write(annotated_frame) 
+        # Annotated frame'i video yaz?c?ya ekle
+        if self.video_writer is not None:
+            self.video_writer.write(annotated_frame)
+        
+        cv2.imshow(f"Camera {self.source}", annotated_frame)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                return False
-            return True
-    
-        if not display_frame(results):
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             return False
-        else:
-            return True
+        return True
 
     def calculate_yolo_classes(self):
         yolo_classes_count = len(self.yolo_classes_counts)
@@ -235,15 +233,11 @@ class Camera:
             self.config()
             self.video_start()
 
-            fourcc = cv2.VideoWriter_fourcc(*'XVID')
-            self.video_writer = cv2.VideoWriter('output_video.avi', fourcc, 20.0, (640, 480))  
-
-            count = self.duration
-            while count:
+            start_time = time.time()  
+            while time.time() - start_time < self.duration:  
                 if not self.yolo_process():
                     break
-                time.sleep(1)
-                count -= 1
+                time.sleep(0.05)  
             
             self.get_lane_info(self.vehicle_loc)
             print(f"CAM {self.source} - LANE: ", self.lane_info)
@@ -252,10 +246,6 @@ class Camera:
 
         finally:
             self.video_stop()
-
-            if self.video_writer is not None:  
-                self.video_writer.release() 
-    
             time.sleep(0.01)
             try:
                 if graph:
