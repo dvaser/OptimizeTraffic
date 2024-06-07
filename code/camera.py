@@ -21,7 +21,8 @@ class Camera:
         self.lane_info = 0
         self.midpoints_vehicle = []
         self.orig_shape = []
-        self.camera_angel = 90 
+        self.camera_angel = 30 
+        self.video_writer = None
 
     def data(self): 
         self.yolo_classes_counts = []
@@ -204,6 +205,10 @@ class Camera:
         def display_frame(results):
             annotated_frame = results[0].plot()
             cv2.imshow(f"Camera {self.source}", annotated_frame)
+
+            if self.video_writer is not None:  
+                self.video_writer.write(annotated_frame) 
+
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 return False
             return True
@@ -229,8 +234,11 @@ class Camera:
             print(f"Source {self.source}")
             self.config()
             self.video_start()
-            count = self.duration
 
+            fourcc = cv2.VideoWriter_fourcc(*'XVID')
+            self.video_writer = cv2.VideoWriter('output_video.avi', fourcc, 20.0, (640, 480))  
+
+            count = self.duration
             while count:
                 if not self.yolo_process():
                     break
@@ -244,6 +252,10 @@ class Camera:
 
         finally:
             self.video_stop()
+
+            if self.video_writer is not None:  
+                self.video_writer.release() 
+    
             time.sleep(0.01)
             try:
                 if graph:
@@ -255,7 +267,7 @@ class Camera:
             print(vehicle_count)
 
 
-cam = Camera(3,"cam",5)
+cam = Camera(1,"cam",5)
 cam.yolo_config(yolo_conf=0.15)
 cam.run(graph=True)
 

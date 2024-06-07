@@ -144,4 +144,4 @@ for l in light:
 
 
 # tls = TrafficLamp()
-# tls = tls.test_pin(5, 21, 13, 19, 12, 6, 20, 26, 16)
+# tls = tls.test_pin(26, 20, 21, 5, 6, 12, 13, 19, 16)
