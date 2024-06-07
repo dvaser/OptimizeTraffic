@@ -2,12 +2,13 @@ from gpiozero import LED
 import time
 
 class TrafficLight:
-    def __init__(self, id, green_pin, yellow_pin, red_pin):
+    def __init__(self, id, green_pin, yellow_pin, red_pin, state=True):
         self.id = id
-        self.green = LED(green_pin)
-        self.yellow = LED(yellow_pin)
-        self.red = LED(red_pin)
-        self.current_light = "red"
+        if state:
+            self.green = LED(green_pin)
+            self.yellow = LED(yellow_pin)
+            self.red = LED(red_pin)
+            self.current_light = "red"
 
     def set_green(self):
         self.green.on()
@@ -36,7 +37,8 @@ class TrafficLight:
 # Pin Test
 class TrafficLamp:
     def __init__(self):
-        pass
+        self.target_road_id = 0
+        self.current_road_id = 0
 
     """ Raspberry Pi Led pin test """
     def test_pin(self, *pins):

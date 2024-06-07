@@ -18,7 +18,6 @@ class Camera:
         self.yolo_config()
         self.yolo_classes_counts = []
         self.vehicle_loc = []
-        self.lane_info = 0
         self.midpoints_vehicle = []
         self.orig_shape = []
         self.camera_angel = 30 
@@ -187,7 +186,7 @@ class Camera:
     def video_start(self):
         self.cam.start()
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.video_writer = cv2.VideoWriter(self.output_file, fourcc, 20.0, (640, 480))
+        self.video_writer = cv2.VideoWriter(self.output_file, fourcc, 1.0, (640, 480))
     
     def video_stop(self):
         self.cam.stop()
@@ -255,11 +254,12 @@ class Camera:
                 print("PLOT EXCEPTION: ", ex)
             vehicle_count = self.calculate_yolo_classes()
             print(vehicle_count)
+            return vehicle_count
 
 
-cam = Camera(1,"cam",5)
-cam.yolo_config(yolo_conf=0.15)
-cam.run(graph=True)
+# cam = Camera(1,"cam",5)
+# cam.yolo_config(yolo_conf=0.15)
+# cam.run(graph=True)
 
 
 
