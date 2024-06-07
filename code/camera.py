@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import math
 
 class Camera:
     def __init__(self, source=0, file_name="cam", duration=5):
@@ -19,8 +20,8 @@ class Camera:
         self.vehicle_loc = []
         self.lane_info = 0
         self.midpoints_vehicle = []
-        """duzenle"""
-        self.camera_angel = 45 
+        self.orig_shape = []
+        self.camera_angel = 90 
 
     def data(self): 
         self.yolo_classes_counts = []
@@ -33,6 +34,7 @@ class Camera:
         
         x, y = zip(*points)
         plt.scatter(x, y, color='blue')
+        plt.scatter(self.orig_shape[0]/2, self.orig_shape[1]/2, color='red')
 
         # Her noktayı etiketleme
         for i, (x_val, y_val) in enumerate(points):
@@ -51,8 +53,11 @@ class Camera:
         plt.savefig(f'review/{output_file}.png')
         plt.show()
 
+    def calc_angle_camera(self):
+        return math.sin(math.radians(self.camera_angel))
+
     def get_lane_info(self, vehicle_loc_list):
-        def calc_vehicle_location(vehicle_loc_list, tolerance=10, threshold=0.6):
+        def calc_vehicle_location(vehicle_loc_list, tolerance=5*self.calc_angle_camera(), threshold=0.6):
             all_positions = []
             position_indices = []
             
@@ -132,7 +137,7 @@ class Camera:
                     added_points.add(midpoint_1)
                     self.same_y_midpoints.append(group)
 
-        def group_points_by_y(points, tolerance=30):
+        def group_points_by_y(points, tolerance=30*self.calc_angle_camera()):
             # print(points)
             groups = []
             for point in points:
@@ -194,6 +199,7 @@ class Camera:
         
         self.yolo_classes_counts.append(results[0].boxes.cls.numpy().tolist())
         self.vehicle_loc.append(results[0].boxes.xywh.numpy().tolist())
+        self.orig_shape = results[0].orig_shape
 
         def display_frame(results):
             annotated_frame = results[0].plot()
@@ -232,7 +238,7 @@ class Camera:
                 count -= 1
             
             self.get_lane_info(self.vehicle_loc)
-            print(self.lane_info)
+            print(f"CAM {self.source} - LANE: ", self.lane_info)
         except Exception as ex:
             print("EXCEPTION: ", ex)
 
@@ -245,13 +251,13 @@ class Camera:
                     self.graph_midpoints(points=self.midpoints_vehicle, output_file=self.file_name)
             except Exception as ex:
                 print("PLOT EXCEPTION: ", ex)
-            return self.calculate_yolo_classes()
+            vehicle_count = self.calculate_yolo_classes()
+            print(vehicle_count)
 
 
-cam = Camera(1,"cam",5)
+cam = Camera(3,"cam",5)
 cam.yolo_config(yolo_conf=0.15)
-x = cam.run(graph=True)
-print(x)
+cam.run(graph=True)
 
 
 
