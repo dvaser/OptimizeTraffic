@@ -166,15 +166,16 @@ class Camera:
             print("SAME Y EXCEPTION: ", ex)
         # print(self.same_y_midpoints)
 
-    def config(self, size_x=640, size_y=480):
+    def config(self, size_x=1920, size_y=1080, framerate=30):
         self.camera_config(source=self.source)
-        self.video_config(size_x=size_x, size_y=size_y)
+        self.video_config(size_x=size_x, size_y=size_y, framerate=framerate)
 
     def camera_config(self, source):
         self.cam = Picamera2(camera_num=source)
     
-    def video_config(self, size_x=640, size_y=480):
+    def video_config(self, size_x, size_y, framerate):
         config = self.cam.create_video_configuration(main={"size": (size_x, size_y), "format": "RGB888"})
+        # config["controls"]["FrameRate"] = framerate
         self.cam.configure(config)
         self.encoder = H264Encoder(bitrate=10000000)
 
@@ -257,9 +258,9 @@ class Camera:
             return vehicle_count
 
 
-# cam = Camera(1,"cam",5)
-# cam.yolo_config(yolo_conf=0.15)
-# cam.run(graph=True)
+cam = Camera(1,"cam",5)
+cam.yolo_config(yolo_conf=0.15)
+cam.run(graph=True)
 
 
 
