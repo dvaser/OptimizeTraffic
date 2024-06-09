@@ -103,7 +103,8 @@ class TrafficLamp:
 
         if info == "saving_mode":
             for light in traffic_lights:
-                light.set_saving_mode()
+                if light.state:
+                    light.set_saving_mode()
             return info
         else:
             while traffic_lights[current_id].state == False:

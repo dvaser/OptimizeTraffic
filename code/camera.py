@@ -13,14 +13,10 @@ class Camera:
     def __init__(self, source=0, file_name="cam", duration=5):
         self.source = source
         self.file_name = file_name
-        self.output_file = f"videos/{file_name}.h264"
         self.duration = duration
         self.yolo_config()
-        self.yolo_classes_counts = []
-        self.vehicle_loc = []
-        self.midpoints_vehicle = []
-        self.orig_shape = []
         self.camera_angel = 30 
+        self.orig_shape = None
         self.video_writer = None
 
     def data(self): 
@@ -32,11 +28,14 @@ class Camera:
             print("No valid points to plot.")
             return
         
-        x, y = zip(*points)
-        plt.scatter(x, y, color='blue')
+        plt.figure()
+        
+        for [x, y] in points:
+            plt.scatter(x, y, color='blue')
         plt.scatter(self.orig_shape[0]/2, self.orig_shape[1]/2, color='red')
 
         # Her noktayı etiketleme
+        print(points)
         for i, (x_val, y_val) in enumerate(points):
             plt.text(x_val, y_val, f'({x_val:.2f}, {y_val:.2f})', fontsize=9, ha='right')
 
@@ -52,11 +51,16 @@ class Camera:
 
         plt.savefig(f'review/{counter}_{output_file}.png')
         plt.show()
+        plt.close()
 
     def calc_angle_camera(self):
         return math.sin(math.radians(self.camera_angel))
 
     def get_lane_info(self, vehicle_loc_list):
+        self.midpoints_loc = []
+        self.midpoints = []
+        self.midpoints_vehicle = []
+    
         def calc_vehicle_location(vehicle_loc_list, tolerance=5*self.calc_angle_camera(), threshold=0.6):
             all_positions = []
             position_indices = []
@@ -184,10 +188,10 @@ class Camera:
         self.yolo_conf = yolo_conf
         self.yolo_classes = yolo_classes
 
-    def video_start(self):
+    def video_start(self, counter):
         self.cam.start()
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.video_writer = cv2.VideoWriter(self.output_file, fourcc, 1.0, (640, 480))
+        self.video_writer = cv2.VideoWriter(f"videos/{counter}_{self.file_name}.avi", fourcc, 1.0, (640, 480))
     
     def video_stop(self):
         self.cam.stop()
@@ -231,7 +235,7 @@ class Camera:
             self.data()
             print(f"Source {self.source}")
             self.config()
-            self.video_start()
+            self.video_start(counter)
 
             start_time = time.time()  
             while time.time() - start_time < self.duration:  
@@ -239,7 +243,6 @@ class Camera:
                     break
                 time.sleep(0.05)  
             
-            self.midpoints_vehicle = []
             self.get_lane_info(self.vehicle_loc)
             print(f"CAM {self.source} - LANE: ", self.lane_info)
         except Exception as ex:

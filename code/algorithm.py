@@ -8,10 +8,10 @@ class Algorithm:
         self.TLS = TrafficLamp()
         self.roads = roads
         self.traffic_lights = traffic_lights
-        self.vehicle_count_info = []
         self.config()
-        self.write_txt(txt="None", mode="w")
+        self.write_txt(txt="None", counter=0, mode="w")
         self.clear_folder('review')
+        self.clear_folder('videos')
         
     def config(self, min_vehicle_threshold=1, margin_err=2, vehicle_departure_time=0.25, max_waiting_time=5):
         self.min_vehicle_threshold = min_vehicle_threshold
@@ -48,17 +48,21 @@ class Algorithm:
             print("GREEN EXCEPTION: ", ex)
 
     def calc_max_waiting_time(self):
-        for i, road in enumerate(self.roads):
+        max_road = None
+        
+        for road in self.roads:
             if road.state:
-                print(road.waiting_time)
-                if road.waiting_time >= self.max_waiting_time:
-                    return road.road_id, [info for info in self.vehicle_count_info if info[2] == road.road_id]
-                else:
-                    return -1, []
+                if road.waiting_time > self.max_waiting_time:
+                    max_road = road
+
+        if max_road:
+            return [False, [info for info in self.vehicle_count_info if info[2] == max_road.road_id]]
+        else:
+            return [True, None]
 
     """ Ambulance Road """
     def calc_ambulance_road(self):
-        return sorted(self.vehicle_count_info, key=lambda info: info[0], reverse=False)[-1]
+        return sorted(self.ambulance_info, key=lambda info: info[0], reverse=False)[-1]
 
     """ Min Vehicle Road """
     def calc_min_road(self):
@@ -71,16 +75,19 @@ class Algorithm:
         else:
             return sorted(self.vehicle_count_info, key=lambda info: info[0], reverse=False)[-max_num]
 
-    def write_txt(self, txt, mode="a"):
+    def write_txt(self, txt, counter, mode="a"):
         if mode == "w":
             with open('docs/run.txt', mode) as file:
                 pass
         else:
             with open('docs/run.txt', mode) as file:
-                file.write(f'{txt}\n\n')
+                file.write(f'Step: {counter}\n{txt}\n\n')
 
     def text(self, road_id, type, count, duration, reason):
-        return f"Road: {road_id}\nType: {type}\nCount: {count}\nDuration: {duration}\nWaiting Time: {self.roads[road_id].waiting_time}\nREASON: {reason}"
+        if road_id != None:
+            return f"Road: {road_id}\nType: {type}\nCount: {count}\nDuration: {duration}\nWaiting Time: {self.roads[road_id].waiting_time}\nREASON: {reason}"
+        else:
+            return f"Road: {road_id}\nType: {type}\nCount: {count}\nDuration: {duration}\nREASON: {reason}"
 
     def clear_folder(self, folder_path):
         # Klasörün içeriğini listele
@@ -119,7 +126,8 @@ class Algorithm:
 
     def run_algorithm(self, counter):
         try:
-            txt = "None"
+            self.vehicle_count_info = []
+            txt = "None Data"
             self.run_camera(counter)
             if self.isThere_ambulance():
                 try:
@@ -131,12 +139,13 @@ class Algorithm:
                     print("AMBULANCE EXCEPTION: ",ex)
             else:
                 try:
+                    print(self.vehicle_count_info)
                     info_min = self.calc_min_road()
                     info_max = self.calc_max_road(max_num=1)
                     info_max_2 = self.calc_max_road(max_num=2)
                     if info_max[0]:
-                        waiting_info = self.calc_max_waiting_time()
-                        if waiting_info[0] == -1:
+                        waiting_bool, waiting_info = self.calc_max_waiting_time()
+                        if waiting_bool:
                             if 0 < info_min[0] <= self.min_vehicle_threshold:
                                 info = info_min
                                 duration = self.calc_green_duration(info)
@@ -151,9 +160,13 @@ class Algorithm:
                                         info = info_max_2
                                         duration = self.calc_green_duration(info)
                                         txt = self.text(road_id=info[2], type=info[1], count=info[0], duration=duration, reason="Max Vehicle Count (For Waiting Time) Road")
+                                else:
+                                    info = info_max
+                                    duration = self.calc_green_duration(info)
+                                    txt = self.text(road_id=info[2], type=info[1], count=info[0], duration=duration, reason="Max Vehicle Count Road")
                             self.run_traffic_light(info=info, duration=duration)
                         else:
-                            info = waiting_info[1]
+                            info = waiting_info[0]
                             duration = self.calc_green_duration(info)
                             txt = self.text(road_id=info[2], type=info[1], count=info[0], duration=duration, reason="Max Waiting Time Road")
                             self.run_traffic_light(info=info, duration=duration)
@@ -164,11 +177,12 @@ class Algorithm:
                     print("BURADA EXCEPTON: ", ex)
                     
             for road in self.roads:
-                if road.road_id != info[2]:
-                    road.set_waiting_times(duration=duration)
-                else:
-                    road.set_waiting_times(duration=0)
+                if road.state:
+                    if road.road_id != info[2]:
+                        road.set_waiting_times(duration=duration)
+                    else:
+                        road.set_waiting_times(duration=0)
         except Exception as ex:
             print("EXCEPTION: ", ex)
         finally:
-            self.write_txt(txt=txt)
+            self.write_txt(txt=txt, counter=counter)
