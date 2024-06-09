@@ -4,10 +4,10 @@ from road import Road
 from algorithm import Algorithm
 
 traffic_lights = [
-        TrafficLight(id= 0, green_pin=0, yellow_pin=0, red_pin=0, state=False),  
-        TrafficLight(id= 1, green_pin=26, yellow_pin=20, red_pin=21),
-        TrafficLight(id= 2, green_pin=5, yellow_pin=6, red_pin=12),
-        TrafficLight(id= 2, green_pin=13, yellow_pin=19, red_pin=16),
+        TrafficLight(light_id= 0, green_pin=0, yellow_pin=0, red_pin=0, state=False),  
+        TrafficLight(light_id= 1, green_pin=26, yellow_pin=20, red_pin=21),
+        TrafficLight(light_id= 2, green_pin=5, yellow_pin=6, red_pin=12),
+        TrafficLight(light_id= 2, green_pin=13, yellow_pin=19, red_pin=16),
     ]
 
 cameras = [
@@ -18,7 +18,7 @@ cameras = [
     ]
 
 roads = [
-        # Road(road_id=0, camera=cameras[0], traffic_light=traffic_lights[0]),
+        Road(road_id=0, camera=cameras[0], traffic_light=traffic_lights[0], state=False),
         Road(road_id=1, camera=cameras[1], traffic_light=traffic_lights[1]),
         Road(road_id=2, camera=cameras[2], traffic_light=traffic_lights[2]),
         Road(road_id=3, camera=cameras[3], traffic_light=traffic_lights[3])

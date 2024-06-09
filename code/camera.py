@@ -258,9 +258,9 @@ class Camera:
             return vehicle_count
 
 
-cam = Camera(1,"cam",5)
-cam.yolo_config(yolo_conf=0.15)
-cam.run(graph=True)
+# cam = Camera(1,"cam",10)
+# cam.yolo_config(yolo_conf=0.15)
+# cam.run(graph=True)
 
 
 

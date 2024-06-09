@@ -1,6 +1,7 @@
 
 class Road:
-    def __init__(self, road_id, camera, traffic_light):
+    def __init__(self, road_id, camera, traffic_light, state=True):
+        self.state = state
         self.road_id = road_id
         self.camera = camera
         self.traffic_light = traffic_light

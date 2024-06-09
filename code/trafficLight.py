@@ -1,9 +1,11 @@
 from gpiozero import LED
 import time
+import random
 
 class TrafficLight:
-    def __init__(self, id, green_pin, yellow_pin, red_pin, state=True):
-        self.id = id
+    def __init__(self, light_id, green_pin, yellow_pin, red_pin, state=True):
+        self.id = light_id
+        self.state = state
         if state:
             self.green = LED(green_pin)
             self.yellow = LED(yellow_pin)
@@ -92,7 +94,7 @@ class TrafficLamp:
         self.current_road_id = current_id
 
     """ Run traffic light mechanism system  """
-    def traffic_light_system(self, traffic_lights, info="saving_mode", target_id=0, green_duration=5, current_id=0):    
+    def traffic_light_system(self, traffic_lights, info="saving_mode", target_id=0, green_duration=5, current_id=0):
         
         def get_yellow(target, current, yellow_duration=2):
             target.set_yellow()
@@ -104,14 +106,19 @@ class TrafficLamp:
                 light.set_saving_mode()
             return info
         else:
+            while traffic_lights[current_id].state == False:
+                current_id = random.randint(0, len(traffic_lights)-1)
+
             target_light = traffic_lights[target_id]
             current_light = traffic_lights[current_id]
 
-            get_yellow(target_light, current_light, 2)
+            if target_id != self.current_road_id:
+                get_yellow(target_light, current_light, 2)
 
             for light in traffic_lights:
-                if light != target_light:
-                    light.set_red()
+                if light.state:
+                    if light != target_light:
+                        light.set_red()
             target_light.set_green()
             time.sleep(green_duration)
 

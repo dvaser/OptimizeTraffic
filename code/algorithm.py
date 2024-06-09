@@ -9,11 +9,11 @@ class Algorithm:
         self.vehicle_count_info = []
         self.config()
         
-    def config(self, min_vehicle_threshold=2, margin_err=2, vehicle_departure_time=0.25):
+    def config(self, min_vehicle_threshold=1, margin_err=2, vehicle_departure_time=0.25, max_waiting_time=30):
         self.min_vehicle_threshold = min_vehicle_threshold
         self.margin_err = margin_err
-        # second
         self.vehicle_departure_time = vehicle_departure_time 
+        self.max_waiting_time = max_waiting_time
 
     """ Is there Ambulance """
     def isThere_ambulance(self):
@@ -29,10 +29,28 @@ class Algorithm:
         try:
             print(f"ROAD {info[2]} - waiting time: ", self.roads[info[2]].waiting_time)
             print(f"ROAD {info[2]} - lane: ", self.roads[info[2]].camera.lane_info)
-            waiting_time = (self.roads[info[2]].waiting_time + (self.roads[info[2]].camera.lane_info * self.vehicle_departure_time)) / info[0]
+            if info[0]:
+                waiting_time = ((info[0] * 1.5) + self.roads[info[2]].waiting_time + (self.roads[info[2]].camera.lane_info * self.vehicle_departure_time)) / info[0]
+            else:
+                waiting_time = (self.roads[info[2]].waiting_time + (self.roads[info[2]].camera.lane_info * self.vehicle_departure_time)) / 1
         except Exception as ex:
             print("WAITING TIME EXCEPTION: ", ex)
         return waiting_time
+
+    def calc_green_duration(self, info):
+        try:
+            return (info[0] * 1.5) + (self.roads[info[2]].camera.lane_info * self.vehicle_departure_time)
+        except Exception as ex:
+            print("GREEN EXCEPTION: ", ex)
+
+    def calc_max_waiting_time(self):
+        for i, road in enumerate(self.roads):
+            if road.state:
+                print(road.waiting_time)
+                if road.waiting_time >= self.max_waiting_time:
+                    return road.road_id, [info for info in self.vehicle_count_info if info[2] == road.road_id]
+                else:
+                    return -1, []
 
     """ Ambulance Road """
     def calc_ambulance_road(self):
@@ -63,19 +81,21 @@ class Algorithm:
     """ Run Road & Camera Library """
     def run_camera(self):
         for i, road in enumerate(self.roads):
-            count, class_info = road.camera_run()
-            info = [count, class_info, road.road_id]
-            self.vehicle_count_info.append(info)
-            if i == len(self.roads):
-                break
+            if road.state:
+                count, class_info = road.camera_run()
+                info = [count, class_info, road.road_id]
+                self.vehicle_count_info.append(info)
+                if i == len(self.roads):
+                    break
 
     def run_algorithm(self):
         try:
             self.run_camera()
             if self.isThere_ambulance():
                 try:
+                    print("ambulance")
                     info = self.calc_ambulance_road()
-                    duration = self.calc_average_waiting_time(info)
+                    duration = self.calc_green_duration(info)
                     self.run_traffic_light(info=info, duration=duration)
                 except Exception as ex:
                     print("AMBULANCE EXCEPTION: ",ex)
@@ -85,21 +105,32 @@ class Algorithm:
                     info_max = self.calc_max_road(max_num=1)
                     info_max_2 = self.calc_max_road(max_num=2)
                     if info_max[0]:
-                        if info_min[0] <= self.min_vehicle_threshold:
-                            info = info_min
-                            duration = self.calc_average_waiting_time(info)
-                        else:
-                            if info_max[0] - self.margin_err <= info_max_2[0]:
-                                if self.calc_average_waiting_time(info_max) >= self.calc_average_waiting_time(info_max_2):
-                                    info = info_max
-                                    duration = self.calc_average_waiting_time(info)
-                                else:
-                                    info = info_max_2
-                                    duration = self.calc_average_waiting_time(info)
+                        waiting_info = self.calc_max_waiting_time()
+                        if waiting_info[0] == -1:
+                            if info_min[0] <= self.min_vehicle_threshold:
+                                info = info_min
+                                print("min")
+                                duration = self.calc_green_duration(info)
+                            else:
+                                if info_max[0] - self.margin_err <= info_max_2[0]:
+                                    if self.calc_average_waiting_time(info_max) >= self.calc_average_waiting_time(info_max_2):
+                                        info = info_max
+                                        print("max 1")
+                                        duration = self.calc_green_duration(info)
+                                    else:
+                                        info = info_max_2
+                                        print("max 2")
+                                        duration = self.calc_green_duration(info)
 
-                        self.run_traffic_light(info=info, duration=duration)
+                            self.run_traffic_light(info=info, duration=duration)
+                        else:
+                            info = waiting_info[1]
+                            print("max waiting time")
+                            duration = self.calc_green_duration(info)
+                            self.run_traffic_light(info=info, duration=duration)
                     else:
                         info = [0, "Car", -1]
+                        print("saving mode")
                         duration = self.calc_average_waiting_time(info)
                         self.run_traffic_light(info="saving_mode", duration=0)
                 except Exception as ex:
