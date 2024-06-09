@@ -13,7 +13,7 @@ class Camera:
     def __init__(self, source=0, file_name="cam", duration=5):
         self.source = source
         self.file_name = file_name
-        self.output_file = f"videos/{file_name}.avi"
+        self.output_file = f"videos/{file_name}.h264"
         self.duration = duration
         self.yolo_config()
         self.yolo_classes_counts = []
@@ -27,7 +27,7 @@ class Camera:
         self.yolo_classes_counts = []
         self.vehicle_loc = []
 
-    def graph_midpoints(self, points, output_file="cam"):
+    def graph_midpoints(self, points, output_file="cam", counter=0):
         if not points:
             print("No valid points to plot.")
             return
@@ -50,7 +50,7 @@ class Camera:
         plt.axhline(y=0, color='k')
         plt.axvline(x=0, color='k')
 
-        plt.savefig(f'review/{output_file}.png')
+        plt.savefig(f'review/{counter}_{output_file}.png')
         plt.show()
 
     def calc_angle_camera(self):
@@ -166,7 +166,7 @@ class Camera:
             print("SAME Y EXCEPTION: ", ex)
         # print(self.same_y_midpoints)
 
-    def config(self, size_x=1920, size_y=1080, framerate=30):
+    def config(self, size_x=640, size_y=480, framerate=30):
         self.camera_config(source=self.source)
         self.video_config(size_x=size_x, size_y=size_y, framerate=framerate)
 
@@ -226,7 +226,7 @@ class Camera:
         car_count =int((car_count / yolo_classes_count) + .5)
         return ambulance_count, car_count
 
-    def run(self, graph=False):
+    def run(self, graph=False, counter=0):
         try:
             self.data()
             print(f"Source {self.source}")
@@ -239,6 +239,7 @@ class Camera:
                     break
                 time.sleep(0.05)  
             
+            self.midpoints_vehicle = []
             self.get_lane_info(self.vehicle_loc)
             print(f"CAM {self.source} - LANE: ", self.lane_info)
         except Exception as ex:
@@ -249,8 +250,7 @@ class Camera:
             time.sleep(0.01)
             try:
                 if graph:
-                    # print(self.midpoints_vehicle)
-                    self.graph_midpoints(points=self.midpoints_vehicle, output_file=self.file_name)
+                    self.graph_midpoints(points=self.midpoints_vehicle, output_file=self.file_name, counter=counter)
             except Exception as ex:
                 print("PLOT EXCEPTION: ", ex)
             vehicle_count = self.calculate_yolo_classes()

@@ -26,5 +26,7 @@ roads = [
 
 algo = Algorithm(roads=roads, traffic_lights=traffic_lights)
 
-while True:
-    algo.run_algorithm()
+counter = 1
+while counter:
+    algo.run_algorithm(counter)
+    counter += 1

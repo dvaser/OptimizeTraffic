@@ -1,0 +1,28 @@
+Road: 1
+Type: Car
+Count: 1
+Duration: 1.75
+Waiting Time: 0
+REASON: Min Vehicle Count Road
+
+Road: 1
+Type: Car
+Count: 1
+Duration: 1.75
+Waiting Time: 0
+REASON: Min Vehicle Count Road
+
+Road: 1
+Type: Car
+Count: 1
+Duration: 1.75
+Waiting Time: 0
+REASON: Min Vehicle Count Road
+
+Road: 1
+Type: Car
+Count: 1
+Duration: 1.75
+Waiting Time: 0
+REASON: Min Vehicle Count Road
+

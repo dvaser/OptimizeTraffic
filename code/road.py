@@ -13,9 +13,9 @@ class Road:
         else:
             self.waiting_time = duration
 
-    def camera_run(self):
+    def camera_run(self, counter):
         self.camera.yolo_config(yolo_conf=0.25)
-        (ambulance_count, car_count) = self.camera.run(graph=True)
+        (ambulance_count, car_count) = self.camera.run(graph=True, counter=counter)
 
         if ambulance_count:
             return ambulance_count, "Ambulance"
